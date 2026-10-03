@@ -2,507 +2,896 @@
 
 ## Software Requirements Specification, Product Requirements & Test-Driven Development Plan
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Status:** Implementation Baseline
 **Application Type:** Personal developer portfolio / public web application
-**Primary Deployment:** Cloudflare Workers
 **Primary Framework:** SvelteKit + Svelte 5 + TypeScript
 **UI Foundation:** Bits UI
+**Styling:** Tailwind CSS + custom design system
+**Hosting:** Cloudflare Workers
 **Source Control:** GitHub
-**Testing Strategy:** TDD + STLC + V-Model + White-Box + Black-Box Testing
+**Testing:** TDD + STLC + V-Model + White-Box + Black-Box + E2E
 **Initial Hosting Target:** R0 hosting cost
-**Optional Domain:** `yourname.dev`
+**Future Domain:** `.dev` custom domain
+**Primary GitHub:** `github.com/yamkelajojo`
 
 ---
 
-# 1. Purpose
+# 1. Product Purpose
 
-The purpose of this project is to create a production-quality personal developer portfolio that presents the developer's professional work, engineering experience, GitHub repositories, technical capabilities and selected projects through a polished, responsive and highly usable web application.
+The portfolio is a production-quality personal website that presents the developer's work, experience, technical capabilities, education, projects and professional progression.
 
-The portfolio must not function merely as an online CV.
+It must function as both:
 
-It must itself demonstrate:
+1. a practical professional portfolio for recruiters, employers and collaborators; and
+2. a live demonstration of the developer's engineering ability.
 
-* frontend engineering ability
-* component architecture
-* responsive UI engineering
+The website itself should demonstrate:
+
+* frontend development
+* full-stack development
+* application development
 * API integration
-* data modelling
+* responsive UI engineering
+* data handling
+* testing
+* CI/CD
 * accessibility
 * performance engineering
-* automated testing
-* CI/CD
 * production deployment
-* maintainability
-* engineering discipline
+* GitHub integration
+* maintainable software architecture
 
-The website shall automatically retrieve public GitHub repository information and present it in the portfolio without requiring manual updates for ordinary repository metadata changes.
-
----
-
-# 2. Product Vision
-
-Create a fast, highly polished developer portfolio that feels like a carefully engineered product rather than a template.
-
-The application should communicate:
-
-> "This website is itself evidence of how I build software."
-
-The portfolio should combine strong visual design with technically sound architecture.
-
-The system should remain intentionally simple where complexity produces no value.
+The portfolio must not feel like a static online CV.
 
 ---
 
-# 3. Core Principles
+# 2. Developer Profile
 
-## 3.1 Requirements before implementation
+The content architecture must reflect the developer's actual background.
 
-No significant feature should be implemented merely because it seems useful.
+## 2.1 Primary Professional Identity
 
-Every feature must originate from an explicit requirement.
+The primary professional positioning is:
 
-Each requirement must have:
+> **Full-stack/software developer with professional web development experience and broader experience across application development, data science and emerging cybersecurity/cloud technologies.**
 
-1. acceptance criteria
-2. verification method
-3. corresponding tests
-4. implementation
-5. regression coverage
+The portfolio should prioritize software development as the central professional identity.
 
 ---
 
-## 3.2 Test-Driven Development
+# 3. Professional Narrative
 
-Major functionality shall follow:
+The website should communicate the progression:
 
 ```text
-Requirement
-     ↓
-Test specification
-     ↓
-Failing test
-     ↓
-Minimal implementation
-     ↓
-Passing test
-     ↓
-Refactor
-     ↓
-Regression verification
+Information Technology
+        ↓
+Software Development
+        ↓
+Full-Stack Web Development
+        ↓
+Data Science / Machine Learning
+        ↓
+Broader Application Development
+        ↓
+Cybersecurity + Cloud interests
 ```
 
-The implementation agent must not treat tests as an afterthought.
+This progression should feel intentional rather than presenting unrelated technologies.
 
----
+The portfolio must avoid implying that all listed technologies represent equal levels of professional experience.
 
-## 3.3 V-Model / STLC
-
-The project shall use the following relationship:
+For example:
 
 ```text
-                    REQUIREMENTS
-                         │
-                         ▼
-                 ACCEPTANCE TESTS
-                         │
-                         ▼
-                  SYSTEM DESIGN
-                         │
-                         ▼
-                   SYSTEM TESTS
-                         │
-                         ▼
-                COMPONENT DESIGN
-                         │
-                         ▼
-                INTEGRATION TESTS
-                         │
-                         ▼
-                 DETAILED DESIGN
-                         │
-                         ▼
-                    UNIT TESTS
-                         │
-                         ▼
-                    IMPLEMENTATION
+Professional experience
+        ≠
+Training experience
+        ≠
+Personal experimentation
+        ≠
+Current learning
 ```
 
-Testing therefore begins while requirements and architecture are being defined, not after development finishes.
+The content model must distinguish these categories.
 
 ---
 
-# 4. Scope
+# 4. Professional Experience
 
-## 4.1 In Scope
+The portfolio shall represent the following experience history supplied in the CV.
 
-The first production version shall include:
+## 4.1 CustomConnect
 
-* landing/home page
-* personal introduction
-* professional summary
-* selected projects
-* project detail pages
-* GitHub repository integration
-* automatic repository metadata updates
-* technology information
-* experience/education information
-* GitHub profile access
-* project repository links
-* optional live-project links
-* responsive navigation
-* responsive layouts
-* accessibility
-* keyboard navigation
-* responsive mobile experience
-* animations and transitions
-* reduced-motion support
-* SEO metadata
-* social metadata
-* sitemap
-* robots configuration
-* custom 404/error handling
-* automated testing
-* CI/CD
-* production build verification
-* Cloudflare deployment
+**Role:** Junior Web Developer
+**Location:** Durban
+**Period:** May 2024 – Present
 
----
+Professional experience should emphasize:
 
-# 5. Explicit Non-Goals
+### Full-stack web development
 
-The first version shall not unnecessarily include:
+* Laravel
+* PHP
+* application routing
+* backend development
+* frontend/backend integration
+* internal business platforms
 
-* authentication
-* portfolio administrator dashboard
-* user accounts
-* CMS
-* paid third-party database
-* Python backend
-* VPS hosting
-* Docker-based production infrastructure
-* Redis
-* Kubernetes
-* unnecessary microservices
-* unnecessary external SaaS dependencies
-* a custom backend server
+### Frontend development
 
-A backend/API layer may exist inside the SvelteKit/Cloudflare Worker environment where functionality genuinely requires server-side execution.
-
----
-
-# 6. Technology Stack
-
-## 6.1 Application
-
-* SvelteKit
-* Svelte 5
-* TypeScript
-
-Cloudflare provides an official SvelteKit deployment path for Workers, including SSR and Worker-backed application functionality.
-
----
-
-## 6.2 UI
-
-Primary UI primitive library:
-
-**Bits UI**
-
-Bits UI is a headless component system for Svelte 5 that provides accessible component primitives while leaving visual styling under application control.
-
-The application should not visually resemble an unmodified component-library template.
-
-Bits UI components shall be used as behavioral/accessibility primitives while the portfolio's visual design system remains custom.
-
----
-
-## 6.3 Styling
-
-Use:
-
+* Vue.js
 * Tailwind CSS
-* CSS where it produces simpler or more appropriate results
-* CSS custom properties/design tokens
+* Bootstrap
+* custom CSS
+* component-based development
+* reusable UI
 
-Avoid hard-coded values when they should instead belong to the design system.
+### Database
 
----
+* MySQL
+* Laravel database integration
+* application data management
 
-## 6.4 Icons
+### Collaboration
 
-Use a lightweight open-source icon system such as Lucide where required.
+* standups
+* Microsoft Teams
+* collaboration with CEO
+* Data Analysts
+* IT leadership
+* business process improvement
 
----
+### Business systems
 
-## 6.5 Testing
+Examples of work represented in the CV include:
 
-### Unit / white-box
+* asset ticket logging
+* employee dashboards
+* internal business platforms
 
-Use:
+The portfolio should convert this into outcome-oriented descriptions where verified.
 
-* Vitest
-* coverage reporting
-
-### Component/integration
-
-Use appropriate Svelte testing utilities where component-level interaction requires them.
-
-### Browser/system/E2E
-
-Use:
-
-* Playwright
-
----
-
-## 6.6 Hosting
-
-Deploy the application as a Cloudflare Worker with Workers Static Assets.
-
-Cloudflare currently recommends Workers Static Assets for new full-stack/static applications rather than the older Workers Sites mechanism.
-
-Cloudflare can deploy the Worker and static assets as a single application.
+It should not invent metrics or business outcomes that are not supported by the CV or project records.
 
 ---
 
-# 7. Hosting and Cost Requirements
+# 5. Data Science Experience
 
-## COST-001 — Zero Hosting Cost
+## 5.1 ExploreAI Academy
 
-The production application shall be designed to operate within Cloudflare's available free-tier resources for a normal personal portfolio.
+**Program:** Full Stack Data Science Learnership
+**Location:** Durban
+**Period:** September 2023 – August 2024
 
-Static asset delivery must use Cloudflare's static asset mechanism where appropriate.
+The portfolio should represent this as structured technical training and practical experience rather than professional employment.
 
-Cloudflare currently states that requests serving static assets are free and unlimited, while requests invoking Worker code are subject to Workers usage limits.
+Relevant areas:
+
+* machine learning
+* predictive modelling
+* linear and multiple regression
+* decision trees
+* random forests
+* natural language processing
+* unsupervised learning
+* clustering
+* anomaly detection
+* Kaggle competitions
+* hackathons
+* Python
+* Pandas
+* Matplotlib
+* Jupyter
+* Streamlit
+* data visualization
+* Power BI
+* data storytelling
+* Git
+* project collaboration
+
+The portfolio should distinguish this from the developer's professional employment experience.
 
 ---
 
-## COST-002 — No Accidental Paid Usage
+# 6. Software Development Experience
 
-The application shall not intentionally depend on:
+## 6.1 WeThinkCode_
 
-* Cloudflare Workers Paid plan
-* paid database plans
-* paid monitoring
-* paid analytics
-* paid UI libraries
-* paid API services
-* paid hosting services
+**Program:** Full Stack Software Development Learnership
+**Location:** Durban
+**Period:** September 2022 – December 2023
 
-without explicit future approval.
+Areas to represent:
 
-The repository must not contain configuration that silently changes the project into a paid architecture.
+* Test-Driven Development
+* Java
+* Python
+* networking
+* client/server applications
+* protocols
+* Docker
+* Maven
+* JVM
+* package management
+* SQLite
+* JDBC
+* Flutter
+* Dart
+* Git
+* GitLab
+* software collaboration
+* software testing
+* PyQt5
+* security fundamentals
+
+The portfolio should particularly highlight the fact that structured software testing and TDD are part of the developer's training background.
+
+This directly reinforces the engineering philosophy of this portfolio itself.
 
 ---
 
-## COST-003 — Fail Safely at Free-Tier Limits
+# 7. Earlier Web Development Experience
 
-The architecture shall be designed so that exceeding free-tier limits does not create unexpected billing.
+## 7.1 Nova Smart Technologies
 
-The project documentation must clearly identify any future action that would require upgrading an account or purchasing a service.
+**Role:** Web Developer Apprentice
+**Location:** Durban
+**Period:** December 2021 – March 2022
+
+Relevant areas:
+
+* WordPress
+* web design
+* Figma
+* plugin integration
+* SEO
+* MySQL
+* content management
+
+This should appear lower in the experience timeline while still contributing to the overall development progression.
 
 ---
 
-# 8. Domain Requirements
+# 8. Education
 
-## DOMAIN-001 — Free Initial Deployment
+The portfolio shall represent:
 
-The application shall first be accessible using the Cloudflare-provided Worker domain.
+## National Diploma: Information Technology — Applications Development
+
+**Walter Sisulu University**
+January 2019 – December 2021
+
+Relevant technical areas:
+
+* Java
+* Oracle
+* VB.NET
+* C#
+* GUI development
+* information systems
+* system software
+* application development
+
+---
+
+## NQF Level 5 Qualification: Systems Development
+
+**WeThinkCode_**
+January 2022 – December 2023
+
+---
+
+## NQF Level 5 Qualification
+
+**ExploreAI Academy, South Africa**
+September 2023 – August 2024
+
+---
+
+## Grade 12 NSC
+
+**Kokstad College**
+January 2013 – December 2017
+
+Relevant subjects should only be displayed if they contribute meaningfully to the professional story.
+
+The portfolio should not give secondary-school information the same visual weight as tertiary education or professional experience.
+
+---
+
+# 9. Certification
+
+The CV currently identifies:
+
+**AWS Cloud Practitioner — In Progress**
+
+Because certification status can change over time, the website should model certification status as data rather than hard-coded prose.
 
 Example:
 
+```text id="g9q7f3"
+Certification
+├── name
+├── provider
+├── status
+├── date
+├── credentialUrl
+└── verificationUrl
+```
+
+Possible statuses:
+
 ```text
-https://portfolio-name.<account>.workers.dev
+In Progress
+Completed
+Expired
+Planned
+```
+
+The portfolio must not continue displaying "In Progress" after certification completion without the content being updated.
+
+---
+
+# 10. Technical Skill Model
+
+Rather than displaying one giant list of technologies, skills should be grouped by area.
+
+## Software Development
+
+* Java
+* Python
+* PHP
+* JavaScript
+* TypeScript where applicable
+* HTML
+* CSS
+
+## Web Development
+
+* Laravel
+* Vue.js
+* Nuxt.js
+* React.js
+* SvelteKit for the portfolio itself
+* Tailwind CSS
+
+## Data Science
+
+* Python
+* Pandas
+* Matplotlib
+* Streamlit
+* machine learning
+* data visualization
+* Power BI
+* Jupyter
+
+## Databases
+
+* MySQL
+* SQLite
+* Oracle
+* SQL
+* JDBC
+
+## Mobile / Application Development
+
+* Flutter
+* Dart
+* application development
+
+## Testing / Engineering
+
+* Test-Driven Development
+* unit testing
+* integration testing
+* Git
+* GitLab
+* Docker
+* Maven
+
+## Security / Systems
+
+The CV identifies familiarity with:
+
+* Kali Linux
+* Bash
+* Metasploit Framework
+* Nmap
+* Wireshark
+* hashing
+* asymmetric encryption
+
+These should be presented as **security/system skills and interests**, not as evidence of professional penetration-testing employment unless a specific professional engagement exists.
+
+## Design / Product
+
+* Figma
+* UI/UX
+* component-based UI
+* responsive design
+
+---
+
+# 11. Skill Representation Rules
+
+The website shall avoid misleading skill presentation.
+
+It should not imply:
+
+```text
+"I know everything equally well."
+```
+
+Instead, the UI should distinguish:
+
+```text
+Professional
+Experienced
+Hands-on
+Academic / Training
+Currently Learning
+Exploring
+```
+
+Where meaningful.
+
+The exact labels should be designed carefully so the site remains clean.
+
+The system must never invent skill proficiency percentages.
+
+Avoid:
+
+```text
+Java     ██████████ 95%
+Python   ████████░░ 80%
+```
+
+unless there is a legitimate evidence-based reason to present such measurements.
+
+---
+
+# 12. Career Narrative
+
+The About section should tell a coherent story.
+
+The suggested narrative structure is:
+
+```text
+Software development foundation
+        ↓
+Web/application development
+        ↓
+Professional full-stack work
+        ↓
+Data science and machine learning
+        ↓
+Security and cloud interests
+        ↓
+Continued technical development
+```
+
+The portfolio should communicate breadth without presenting the developer as unfocused.
+
+---
+
+# 13. Primary Navigation
+
+The initial navigation should be:
+
+```text
+Home
+Work
+About
+Experience
+GitHub
+CV
+Contact
+```
+
+A future "Labs" section may be introduced if there is enough technical experimentation to justify it.
+
+---
+
+# 14. Labs / Experiments
+
+The architecture should allow an optional section:
+
+```text
+/Labs
+```
+
+This is particularly suitable for:
+
+* cybersecurity experiments
+* data science experiments
+* AI experiments
+* application prototypes
+* technical demonstrations
+* unusual engineering work
+* browser experiments
+
+This provides a place for technically interesting work that does not belong in the primary professional case-study section.
+
+It prevents the main portfolio from becoming overloaded.
+
+---
+
+# 15. GitHub Integration
+
+The GitHub profile is:
+
+```text
+https://github.com/yamkelajojo
+```
+
+The portfolio should treat GitHub as both:
+
+1. a professional identity/link; and
+2. a live data source.
+
+The system should automatically retrieve public repository metadata.
+
+---
+
+# 16. Automatic GitHub Repository Data
+
+The GitHub integration should support:
+
+```text
+Repository name
+Description
+Primary language
+Stars
+Forks
+Last updated
+Topics
+Repository URL
+Live/demo URL where available
+```
+
+Potential additional metadata:
+
+```text
+Created date
+Last pushed date
+Default branch
+Visibility
+```
+
+Only useful information should be displayed to visitors.
+
+---
+
+# 17. Featured vs Automatic Projects
+
+The portfolio must separate:
+
+### Featured projects
+
+Manually curated.
+
+These receive:
+
+* custom descriptions
+* architecture
+* engineering decisions
+* screenshots
+* challenges
+* results
+* testing information
+* live/demo links
+
+### GitHub projects
+
+Automatically discovered.
+
+These receive:
+
+* repository metadata
+* language
+* stars
+* forks
+* topics
+* updated date
+* GitHub link
+
+Architecture:
+
+```text id="j5ul7c"
+                  GitHub
+                     │
+             ┌───────┴────────┐
+             ▼                ▼
+      Featured Projects   Repository Index
+             │                │
+             ▼                ▼
+       Case Studies     Auto-generated data
 ```
 
 ---
 
-## DOMAIN-002 — Optional `.dev` Domain
+# 18. Project Case Study Structure
 
-The architecture shall support attaching a custom `.dev` domain later without modifying the application architecture.
-
-Example:
+The portfolio should provide a reusable case-study structure:
 
 ```text
-https://yamkela.dev
+Project
+│
+├── Overview
+├── Problem
+├── Approach
+├── Role
+├── Technology
+├── Architecture
+├── Key Decisions
+├── Challenges
+├── Testing
+├── Screenshots
+├── Results
+└── Links
 ```
 
-The `.dev` domain itself is a domain-registration expense and is therefore excluded from the R0 hosting objective.
-
-The deployment target must remain Cloudflare Workers regardless of whether the application uses the default Worker hostname or a future custom domain.
+Sections should only render when relevant information exists.
 
 ---
 
-# 9. Application Information Architecture
+# 19. Project Taxonomy
 
-The initial route structure should follow:
+Projects should be categorisable by domain.
+
+Potential categories:
 
 ```text
-/
-├── /about
-├── /work
-├── /work/[slug]
-├── /github
-├── /experience
-├── /contact
-└── /404
+Web
+Mobile
+Full Stack
+Data Science
+AI / ML
+Cybersecurity
+DevOps / Cloud
+UI / UX
+Experiments
 ```
 
-The exact route structure may be refined during implementation if usability or information architecture testing demonstrates a better structure.
+A single project may have several categories.
 
 ---
 
-# 10. Home Page Requirements
+# 20. Personal Portfolio as a Project
 
-## HOME-001 — Hero
+The portfolio itself should appear as a project in the developer's work history.
 
-The home page shall clearly communicate:
-
-* developer identity
-* primary professional focus
-* short value proposition
-* primary call to action
-* GitHub access
-* selected work access
-
-The hero must remain understandable without animation.
-
----
-
-## HOME-002 — Selected Work
-
-The home page shall provide access to selected projects.
-
-Each featured project shall provide:
-
-* project name
-* short description
-* technology summary
-* visual representation
-* project detail link
-* repository link where available
-* live demo link where available
-
----
-
-## HOME-003 — Professional Snapshot
-
-The home page should provide concise access to:
-
-* technical focus
-* current/recent work
-* relevant technology areas
-* GitHub
-* CV/resume where appropriate
-
----
-
-## HOME-004 — Responsive Presentation
-
-The home page must function correctly across:
-
-* mobile
-* tablet
-* laptop
-* desktop
-* large desktop
-
-No important content may depend exclusively on hover.
-
----
-
-# 11. Project Requirements
-
-## PROJECT-001 — Featured Projects
-
-Featured projects shall be manually curated.
-
-This allows important projects to receive richer contextual presentation than automatically imported repositories.
-
----
-
-## PROJECT-002 — Project Case Study
-
-A project detail page may contain:
+It should demonstrate:
 
 ```text
-Project overview
-Problem
-Context
-Role
-Architecture
-Technology
-Engineering decisions
-Challenges
-Testing
-Results
-Screenshots/media
-Repository
-Live application
-```
-
-Only relevant sections should be displayed for a given project.
-
-Empty sections shall not be rendered.
-
----
-
-## PROJECT-003 — GitHub Repository Reference
-
-Where applicable, a project shall link directly to its source repository.
-
----
-
-## PROJECT-004 — Automatic Repository Discovery
-
-The application shall be capable of retrieving public repository metadata from GitHub.
-
-Automatically retrieved repository metadata shall include, where supplied by GitHub:
-
-```text
-repository
-stars
-forks
-language
-last updated
-description
-topics
-```
-
-The internal application model should normalize the GitHub response rather than coupling UI components directly to the external API response.
-
----
-
-# 12. GitHub Integration Architecture
-
-The preferred data flow is:
-
-```text
+SvelteKit
+Svelte 5
+TypeScript
+Bits UI
+Tailwind
+Cloudflare Workers
 GitHub API
-    │
-    ▼
-GitHub adapter
-    │
-    ▼
-Repository normalization
-    │
-    ▼
-Application domain model
-    │
-    ▼
-UI components
+TDD
+Playwright
+Vitest
+CI/CD
 ```
 
-The UI shall never depend directly on raw GitHub API response structures.
+This creates a recursive but useful concept:
+
+> The portfolio demonstrates the same engineering practices it claims the developer values.
 
 ---
 
-# 13. GitHub Repository Data Model
+# 21. Home Page Content Strategy
 
-The normalized repository object should conceptually contain:
+The homepage should not reproduce the CV.
 
-```ts
+Recommended structure:
+
+```text
+Hero
+  ↓
+Short professional positioning
+  ↓
+Selected work
+  ↓
+Technical areas
+  ↓
+Experience snapshot
+  ↓
+GitHub activity/work
+  ↓
+Call to action
+```
+
+The CV remains available through `/CV` or a direct download.
+
+---
+
+# 22. Hero Positioning
+
+The hero should communicate the central identity without trying to list everything.
+
+The concept should revolve around:
+
+```text
+Software development
++
+building useful products
++
+full-stack capability
++
+technical curiosity
+```
+
+Cybersecurity and data science should appear naturally as secondary areas of expertise/interests rather than competing for the same headline.
+
+---
+
+# 23. About Page
+
+The About page may contain:
+
+```text
+Who I am
+How I got into software
+Professional experience
+Technical interests
+Current direction
+Education
+Certification
+```
+
+The page should feel like a professional narrative rather than another resume dump.
+
+---
+
+# 24. Experience Timeline
+
+The site should present experience chronologically.
+
+Example structure:
+
+```text
+2024 → Present
+CustomConnect
+Junior Web Developer
+
+2023 → 2024
+ExploreAI Academy
+Full Stack Data Science
+
+2022 → 2023
+WeThinkCode_
+Full Stack Software Development
+
+2021 → 2022
+Nova Smart Technologies
+Web Developer Apprentice
+```
+
+The exact visual treatment is determined during design.
+
+Overlapping education/training periods must not be "fixed" by changing dates without evidence.
+
+---
+
+# 25. Resume Integration
+
+The site shall provide a downloadable CV.
+
+The CV should be linked prominently but not dominate the site.
+
+Recommended placement:
+
+```text
+Navigation → CV
+About → Download CV
+Contact → CV
+```
+
+The actual PDF should remain a separate file.
+
+The website content should not depend on the PDF being parsed at runtime.
+
+---
+
+# 26. Professional Links
+
+The portfolio should include:
+
+### GitHub
+
+`https://github.com/yamkelajojo`
+
+### LinkedIn
+
+`https://www.linkedin.com/in/yamkela-jojo-911774217`
+
+Links should be represented as structured content so they can be changed without editing UI components.
+
+---
+
+# 27. Content Data Model
+
+Professional information should live in structured data rather than being scattered through Svelte components.
+
+Example conceptual model:
+
+```ts id="m1d7hv"
+type Profile = {
+    name: string
+    headline: string
+    summary: string
+    location?: string
+    githubUrl: string
+    linkedinUrl: string
+    resumeUrl: string
+}
+```
+
+Experience:
+
+```ts id="v07x2a"
+type Experience = {
+    company: string
+    role: string
+    location?: string
+    startDate: string
+    endDate?: string
+    type: 'professional' | 'training' | 'apprenticeship'
+    description: string
+    technologies: string[]
+    highlights: string[]
+}
+```
+
+Education:
+
+```ts id="xv0pl8"
+type Education = {
+    institution: string
+    qualification: string
+    startDate: string
+    endDate?: string
+    level?: string
+    subjects?: string[]
+}
+```
+
+Skills:
+
+```ts id="3m2pxj"
+type Skill = {
+    name: string
+    category: string
+    context: 'professional' | 'training' | 'hands-on' | 'learning' | 'exploring'
+}
+```
+
+Certifications:
+
+```ts id="f6f5n2"
+type Certification = {
+    name: string
+    provider: string
+    status: 'in-progress' | 'completed' | 'planned' | 'expired'
+    date?: string
+    credentialUrl?: string
+}
+```
+
+This model allows the portfolio to evolve without rewriting UI components.
+
+---
+
+# 28. GitHub Data Model
+
+```ts id="n0xqcw"
 type GitHubRepository = {
     name: string
     fullName: string
@@ -519,92 +908,400 @@ type GitHubRepository = {
 }
 ```
 
-The actual implementation may evolve while preserving the requirements.
+The UI shall depend on this normalized model rather than GitHub's raw response.
 
 ---
 
-# 14. GitHub Automatic Updates
+# 29. Content Accuracy Requirement
 
-## GITHUB-001
+The portfolio must not:
 
-Repository metadata shall update automatically without requiring manual editing of repository values inside the portfolio source code.
+* invent professional achievements
+* invent project results
+* invent employment responsibilities
+* invent certifications
+* inflate technical expertise
+* fabricate metrics
+* imply professional cybersecurity experience where only training/interest is documented
 
-For example, if a repository's:
+Where a case study needs a metric that is not available, the section should be omitted rather than fabricated.
 
-```text
-star count
-description
-topics
-fork count
-last updated timestamp
+---
+
+# 30. CV Normalization Requirements
+
+Before the CV information is entered into the portfolio, it should be normalized.
+
+The supplied CV contains some duplicated wording and areas where a modern portfolio can communicate the experience more clearly.
+
+For example, the CustomConnect CV currently contains duplicate "Development and Security" wording. The portfolio content should use the underlying information without reproducing accidental duplication.
+
+The website should present polished content, while the downloadable CV remains its own document.
+
+---
+
+# 31. Hosting Architecture
+
+```text id="h8oykq"
+                    INTERNET
+                       │
+                       ▼
+                Cloudflare Workers
+                       │
+          ┌────────────┴─────────────┐
+          │                          │
+          ▼                          ▼
+   Static Assets                 Worker Logic
+          │                          │
+          │                    ┌─────┴─────┐
+          │                    ▼           ▼
+          │                 GitHub      Optional
+          │                   API       D1/KV
+          │
+          └──────────────┬───────────────┘
+                         ▼
+                    SvelteKit
+                         │
+                         ▼
+                    Visitor
 ```
 
-changes, the portfolio should eventually reflect the new values.
+The application does not require a Python backend.
 
 ---
 
-## GITHUB-002 — Caching
+# 32. GitHub Data Flow
 
-The application shall not make unnecessary GitHub API requests for every page visitor.
-
-A cache/revalidation strategy must be used.
-
-Preferred model:
-
-```text
+```text id="tpufjd"
 Visitor
    ↓
-Cloudflare Worker
+SvelteKit / Worker
    ↓
-cached GitHub metadata
+cache lookup
    │
-   ├── fresh → return
+   ├── valid → return cached metadata
    │
-   └── stale → fetch GitHub
-                  ↓
-               normalize
-                  ↓
-                cache
+   └── stale/missing
+            ↓
+        GitHub API
+            ↓
+      validate response
+            ↓
+        normalize
+            ↓
+          cache
+            ↓
+         return
+```
+
+This prevents unnecessary API calls and makes the portfolio resilient.
+
+---
+
+# 33. GitHub Failure Behaviour
+
+If GitHub fails:
+
+```text
+1. Use cached data
+2. Use local featured-project data
+3. Display graceful unavailable state
+4. Do not crash the page
+5. Do not expose raw API errors
 ```
 
 ---
 
-## GITHUB-003 — Graceful Degradation
+# 34. UI Foundation
 
-If GitHub is temporarily unavailable:
+Use Bits UI for appropriate interactive primitives.
 
-* the portfolio must continue functioning
-* cached metadata should remain usable where possible
-* the UI must not crash
-* the visitor should not receive raw API errors
+Possible areas:
+
+* navigation
+* dialogs
+* popovers
+* tabs
+* accordions
+* tooltips
+* menus
+* command interfaces
+
+Bits UI provides behavior/accessibility primitives while the application retains full visual control. ([bits-ui.com](https://www.bits-ui.com/docs/introduction?utm_source=chatgpt.com))
 
 ---
 
-## GITHUB-004 — Partial Data
+# 35. Visual Direction
 
-The UI must gracefully handle:
+The portfolio should feel:
+
+* modern
+* restrained
+* highly intentional
+* professional
+* technically sophisticated
+* personal
+
+It should not feel like:
+
+* an AI-generated template
+* a SaaS dashboard
+* a generic Bootstrap portfolio
+* a GitHub clone
+* an over-animated developer playground
+
+---
+
+# 36. Motion System
+
+Motion shall be purposeful.
+
+Potential uses:
+
+* route transitions
+* navigation transitions
+* project-card interactions
+* subtle reveal animations
+* interactive metadata
+* hover relationships
+* scroll transitions
+
+Reduced motion must be respected.
+
+---
+
+# 37. Accessibility
+
+Requirements:
+
+* semantic HTML
+* keyboard support
+* visible focus
+* accessible names
+* correct heading hierarchy
+* usable mobile navigation
+* accessible dialogs/popovers
+* alt text
+* contrast
+* reduced motion
+* no keyboard traps
+
+Accessibility is part of acceptance testing.
+
+---
+
+# 38. Responsive Testing
+
+At minimum test:
 
 ```text
-description = null
-language = null
-topics = []
-stars = 0
-forks = 0
-homepage = null
+Mobile
+Tablet
+Laptop
+Desktop
+Large Desktop
 ```
 
-Missing optional data must not create broken layouts.
+Verify:
+
+* no unintended horizontal scroll
+* usable navigation
+* project cards
+* project detail pages
+* image scaling
+* text wrapping
+* footer
+* buttons
+* interactions
 
 ---
 
-# 15. GitHub Testing Requirements
+# 39. SEO
 
-The following branches must be explicitly considered in white-box testing:
+Required:
+
+* title
+* description
+* Open Graph
+* canonical URLs where appropriate
+* sitemap
+* robots.txt
+* semantic headings
+* project-specific metadata
+* meaningful URLs
+
+---
+
+# 40. Performance
+
+The portfolio must prioritize:
+
+* fast initial loading
+* low JavaScript payload
+* optimized images
+* minimal third-party dependencies
+* efficient fonts
+* static asset delivery
+* minimal API calls
+* efficient animation
+
+Cloudflare's Workers Static Assets architecture is particularly appropriate because static files can be served separately from dynamic Worker execution. ([developers.cloudflare.com](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/?utm_source=chatgpt.com))
+
+---
+
+# 41. Cost Requirements
+
+Hosting target:
 
 ```text
-repository exists
-repository unavailable
+R0/month
+```
 
+The project should remain within appropriate Cloudflare free-tier usage for ordinary portfolio traffic.
+
+No paid service may be introduced without explicit approval.
+
+The future `.dev` domain is a separate domain-registration expense.
+
+---
+
+# 42. Testing Philosophy
+
+The project shall use:
+
+```text
+TDD
++
+STLC
++
+V-Model
++
+White-box testing
++
+Black-box testing
++
+Integration testing
++
+System testing
++
+Acceptance testing
++
+Regression testing
+```
+
+---
+
+# 43. TDD Cycle
+
+Every significant behavior follows:
+
+```text id="rq2c5f"
+RED
+Write failing test
+      ↓
+GREEN
+Implement minimum behavior
+      ↓
+REFACTOR
+Improve implementation
+      ↓
+REGRESSION
+Run relevant suite
+```
+
+---
+
+# 44. White-Box Testing
+
+White-box testing shall inspect internal implementation.
+
+Target:
+
+* statements
+* branches
+* conditions
+* paths
+* loops
+* transformations
+* error handling
+
+Coverage should be measured.
+
+The goal is meaningful coverage of critical logic rather than blindly achieving 100%.
+
+---
+
+# 45. Black-Box Testing
+
+Tests shall also validate behavior without relying on implementation details.
+
+Example:
+
+```text
+Given a visitor opens a project
+When they select the GitHub link
+Then the correct repository is opened
+```
+
+The test should care about the requirement, not how the component is internally implemented.
+
+---
+
+# 46. Integration Testing
+
+Example:
+
+```text
+GitHub response
+      ↓
+adapter
+      ↓
+normalizer
+      ↓
+repository service
+      ↓
+Svelte page
+      ↓
+repository card
+```
+
+All boundaries should be tested where failure could affect the visitor.
+
+---
+
+# 47. End-to-End Testing
+
+Use Playwright for browser-level testing.
+
+Critical paths include:
+
+```text
+Home
+→ Work
+→ Project
+→ GitHub
+
+Home
+→ About
+→ Experience
+
+Home
+→ CV
+
+Mobile
+→ Menu
+→ Page
+```
+
+---
+
+# 48. Example GitHub Tests
+
+### Branch coverage
+
+Test:
+
+```text
 description exists
 description missing
 
@@ -617,361 +1314,11 @@ topics empty
 homepage exists
 homepage missing
 
-stars > 0
-stars = 0
-
-forks > 0
-forks = 0
-
-GitHub succeeds
-GitHub returns an error
-GitHub returns malformed/incomplete data
+GitHub success
+GitHub failure
 ```
 
----
-
-# 16. Data Ownership Rules
-
-GitHub owns:
-
-```text
-repository metadata
-stars
-forks
-language
-topics
-timestamps
-repository URL
-```
-
-The portfolio owns:
-
-```text
-featured status
-case study
-personal commentary
-problem statement
-architecture explanation
-engineering explanation
-screenshots
-display order
-portfolio-specific categorization
-```
-
-This separation must be maintained.
-
----
-
-# 17. UI Requirements
-
-## UI-001 — Custom Design System
-
-The portfolio shall use a coherent internal design system.
-
-The system should define:
-
-* typography
-* spacing
-* radii
-* shadows
-* borders
-* surfaces
-* colors
-* interaction states
-* motion
-* responsive behavior
-
----
-
-## UI-002 — Bits UI
-
-Bits UI shall be used where accessible interactive primitives are required, including appropriate components such as:
-
-* dialog
-* dropdown
-* tooltip
-* tabs
-* accordion
-* popover
-* navigation interactions
-
-Bits UI is intentionally headless, allowing the portfolio to maintain full visual control.
-
----
-
-## UI-003 — No Library-Looking UI
-
-Components must not simply inherit generic library styling.
-
-The visual language shall be deliberately designed for the portfolio.
-
----
-
-## UI-004 — Interaction States
-
-Interactive elements must have defined:
-
-* default
-* hover
-* focus
-* active
-* disabled
-* loading
-* error
-
-states where applicable.
-
----
-
-# 18. Accessibility Requirements
-
-The portfolio shall meet practical accessibility expectations.
-
-Requirements include:
-
-* keyboard navigation
-* visible focus
-* semantic HTML
-* accessible names
-* appropriate ARIA only where required
-* sufficient contrast
-* accessible interactive controls
-* reduced-motion support
-* meaningful link text
-* image alternative text
-* no keyboard traps
-
-Automated accessibility checks shall supplement manual verification.
-
----
-
-# 19. Responsive Requirements
-
-The application must be tested against representative viewport classes:
-
-```text
-Mobile
-Tablet
-Laptop
-Desktop
-Large desktop
-```
-
-Tests must verify:
-
-* navigation
-* hero
-* project cards
-* project pages
-* typography
-* media
-* footer
-* interactive controls
-
-No horizontal scrolling should occur unless explicitly intended.
-
----
-
-# 20. Motion Requirements
-
-Animations should improve comprehension and perceived quality rather than exist merely for decoration.
-
-Animations must:
-
-* have coherent timing
-* not interfere with interaction
-* not delay access to content unnecessarily
-* preserve usability
-* support reduced-motion preferences
-
-A reduced-motion mode shall remove or significantly reduce non-essential animation.
-
----
-
-# 21. Performance Requirements
-
-Performance is a first-class requirement.
-
-The application shall:
-
-* optimize images
-* avoid unnecessary JavaScript
-* lazy-load non-critical media where appropriate
-* minimize client-side work
-* avoid unnecessary dependencies
-* avoid blocking the initial render
-* use static asset delivery whenever practical
-* keep dynamic Worker execution limited to actual server-side requirements
-
-Cloudflare's current Workers model allows static assets and Worker code to operate together, making it appropriate to keep static content on the asset path and reserve Worker execution for dynamic functionality.
-
----
-
-# 22. SEO Requirements
-
-The application shall provide:
-
-* page titles
-* meta descriptions
-* canonical URLs where appropriate
-* Open Graph metadata
-* Twitter/X metadata where appropriate
-* sitemap
-* robots configuration
-* meaningful semantic headings
-* crawlable project pages
-
-Each project detail page must have page-specific metadata.
-
----
-
-# 23. Error Handling
-
-The application shall gracefully handle:
-
-```text
-GitHub unavailable
-GitHub timeout
-unexpected API response
-invalid project data
-missing images
-invalid project slug
-unknown route
-Worker/API failure
-```
-
-Errors must never expose sensitive implementation details.
-
----
-
-# 24. Security Requirements
-
-The application shall:
-
-* never expose secrets in client-side JavaScript
-* never commit API tokens
-* use environment bindings/secrets for sensitive server-side values
-* validate externally received data
-* sanitize untrusted content where required
-* avoid unnecessary server-side capabilities
-* avoid exposing internal errors
-
-Public GitHub repository data may be displayed without secret credentials where technically appropriate.
-
----
-
-# 25. SEO, Accessibility and Security Are Acceptance Requirements
-
-These are not optional polish tasks.
-
-A feature shall not be considered complete if it functions visually but:
-
-* fails keyboard navigation
-* exposes a secret
-* breaks mobile layouts
-* produces invalid accessible names
-* causes avoidable severe performance issues
-* exposes raw internal errors
-
----
-
-# 26. Testing Strategy
-
-Testing shall combine:
-
-### Black-box testing
-
-Tests based on requirements and expected system behavior.
-
-### White-box testing
-
-Tests derived from internal:
-
-* statements
-* branches
-* conditions
-* paths
-* loops
-* data handling
-
-### Unit testing
-
-Individual functions/components.
-
-### Integration testing
-
-Interactions between modules.
-
-### System testing
-
-The complete deployed application.
-
-### Acceptance testing
-
-Verification against the original product requirements.
-
-### Regression testing
-
-Previously verified behavior must remain functional after modifications.
-
----
-
-# 27. White-Box Coverage Strategy
-
-Coverage shall focus on meaningful engineering risk.
-
-The project should measure:
-
-* statement coverage
-* branch coverage
-* function coverage
-* condition coverage where appropriate
-
-100% coverage shall not be treated as the sole definition of quality.
-
-Critical business/data paths require stronger testing than trivial presentation code.
-
----
-
-# 28. Example White-Box Test
-
-For a repository metadata mapper:
-
-```text
-Input:
-GitHub repository with:
-description = "Example"
-language = "TypeScript"
-topics = ["svelte", "portfolio"]
-stars = 10
-forks = 2
-```
-
-Expected normalized output:
-
-```text
-description = "Example"
-language = "TypeScript"
-topics = ["svelte", "portfolio"]
-stars = 10
-forks = 2
-```
-
-Additional tests:
-
-```text
-description = null
-language = null
-topics = []
-stars = 0
-forks = 0
-```
-
----
-
-# 29. Boundary Testing
-
-Boundary tests shall include appropriate cases such as:
+### Boundary cases
 
 ```text
 0 repositories
@@ -980,264 +1327,80 @@ many repositories
 
 0 stars
 1 star
-large star count
-
-0 forks
-1 fork
-large fork count
+large values
 
 0 topics
 1 topic
 many topics
-
-empty description
-short description
-long description
-```
-
-List rendering shall be tested with enough items to expose layout problems.
-
----
-
-# 30. Integration Testing
-
-Integration tests shall verify flows such as:
-
-```text
-GitHub response
-      ↓
-adapter
-      ↓
-normalizer
-      ↓
-portfolio data
-      ↓
-component
-      ↓
-rendered repository card
-```
-
-The tests should verify not only individual functions but whether modules communicate correctly.
-
----
-
-# 31. Browser / E2E Testing
-
-Playwright shall verify important visitor journeys.
-
-### Example:
-
-```text
-Open /
-   ↓
-Hero visible
-   ↓
-Select Work
-   ↓
-Work page loads
-   ↓
-Select project
-   ↓
-Project page loads
-   ↓
-GitHub link available
-   ↓
-Navigate back
-   ↓
-Application remains functional
 ```
 
 ---
 
-# 32. Mobile Browser Testing
+# 49. CI/CD
 
-At minimum, Playwright verification shall include representative mobile dimensions.
-
-Tests shall cover:
-
-* navigation
-* menu
-* scrolling
-* project cards
-* project detail pages
-* buttons/links
-* images
-* footer
-
----
-
-# 33. Accessibility Testing
-
-Automated browser checks should verify major accessibility concerns.
-
-Manual verification shall also be performed for:
-
-* keyboard flow
-* focus behavior
-* navigation order
-* reduced motion
-* semantic structure
-
----
-
-# 34. Visual Regression
-
-Visual regression testing should be used selectively for important stable surfaces.
-
-Candidates:
-
-* homepage hero
-* main navigation
-* selected-project cards
-* project detail hero
-* mobile navigation
-* major responsive layouts
-
-Visual tests must not become so brittle that ordinary harmless content changes constantly fail CI.
-
----
-
-# 35. Test Naming Standard
-
-Tests should describe behavior.
-
-Prefer:
+GitHub Actions should execute:
 
 ```text
-displays cached repository metadata when GitHub is unavailable
-```
-
-rather than:
-
-```text
-testGithub2
-```
-
-Requirements should map to tests through stable identifiers.
-
-Example:
-
-```text
-GITHUB-003
-   ↓
-TEST-GITHUB-003-A
-TEST-GITHUB-003-B
-TEST-GITHUB-003-C
-```
-
----
-
-# 36. Requirement Traceability
-
-The project shall maintain traceability:
-
-```text
-Requirement
-    ↓
-Acceptance Criterion
-    ↓
-System Test
-    ↓
-Integration Test
-    ↓
-Unit/White-Box Tests
-    ↓
-Implementation
-```
-
-A feature should not be marked complete without demonstrating this relationship.
-
----
-
-# 37. Example Traceability Matrix
-
-| Requirement               | Unit | Integration | E2E | Acceptance |
-| ------------------------- | ---- | ----------- | --- | ---------- |
-| HOME-001 Hero             | ✓    | —           | ✓   | ✓          |
-| PROJECT-001 Featured work | ✓    | ✓           | ✓   | ✓          |
-| GITHUB-001 Auto update    | ✓    | ✓           | ✓   | ✓          |
-| GITHUB-003 GitHub failure | ✓    | ✓           | ✓   | ✓          |
-| UI-002 Bits UI            | —    | ✓           | ✓   | ✓          |
-| Accessibility             | —    | —           | ✓   | ✓          |
-| Responsive layout         | —    | —           | ✓   | ✓          |
-| SEO                       | —    | ✓           | ✓   | ✓          |
-| Error handling            | ✓    | ✓           | ✓   | ✓          |
-
----
-
-# 38. CI/CD Pipeline
-
-Every pull request should execute the applicable quality gates.
-
-Preferred sequence:
-
-```text
-Git push
-   ↓
 Install dependencies
-   ↓
+      ↓
 Type check
-   ↓
+      ↓
 Lint
-   ↓
+      ↓
 Unit tests
-   ↓
+      ↓
 Coverage
-   ↓
+      ↓
 Integration tests
-   ↓
-Production build
-   ↓
-Browser/E2E tests
-   ↓
+      ↓
+Build
+      ↓
+Playwright
+      ↓
 Accessibility checks
-   ↓
-Deployment eligibility
+      ↓
+Deployment
 ```
 
-A failed critical test shall prevent production deployment.
+Critical test failures must prevent production deployment.
 
 ---
 
-# 39. Production Deployment
+# 50. Preview Environment
 
-The production deployment shall target Cloudflare Workers.
+The system should support preview deployments for meaningful changes before production.
 
-The application shall use the current SvelteKit/Cloudflare integration rather than legacy Workers Sites infrastructure. Cloudflare's current documentation provides direct SvelteKit deployment through Workers and Wrangler.
+This allows the developer to inspect:
+
+* layout
+* behavior
+* responsive design
+* GitHub integration
+* browser behavior
+
+before a production deployment.
 
 ---
 
-# 40. Deployment Environments
+# 51. Production Deployment
 
-At minimum:
+Initial public deployment:
 
 ```text
-Local
-Preview
-Production
+*.workers.dev
 ```
 
-The project should support testing changes before production.
-
----
-
-# 41. Environment Variables
-
-Environment configuration shall distinguish:
+Future:
 
 ```text
-PUBLIC_*
-server-only secrets
-deployment configuration
+yourname.dev
 ```
 
-No secret may be exposed through public SvelteKit environment variables.
+Both should point to the same application architecture.
 
 ---
 
-# 42. Repository Structure
-
-Suggested structure:
+# 52. Repository Structure
 
 ```text
 portfolio/
@@ -1249,9 +1412,17 @@ portfolio/
 │   │   │   ├── navigation/
 │   │   │   ├── projects/
 │   │   │   ├── github/
+│   │   │   ├── experience/
 │   │   │   └── shared/
 │   │   │
 │   │   ├── data/
+│   │   │   ├── profile.ts
+│   │   │   ├── experience.ts
+│   │   │   ├── education.ts
+│   │   │   ├── skills.ts
+│   │   │   ├── certifications.ts
+│   │   │   └── projects.ts
+│   │   │
 │   │   ├── github/
 │   │   ├── utils/
 │   │   └── types/
@@ -1260,6 +1431,7 @@ portfolio/
 │   │   ├── +page.svelte
 │   │   ├── about/
 │   │   ├── work/
+│   │   ├── work/[slug]/
 │   │   ├── github/
 │   │   ├── experience/
 │   │   ├── contact/
@@ -1289,380 +1461,382 @@ portfolio/
 └── README.md
 ```
 
-The final structure may change where justified by the implementation.
-
 ---
 
-# 43. Dependency Principles
+# 53. Requirement IDs
 
-Every dependency must justify its existence.
+All significant requirements should receive stable IDs.
 
-Before installing a package, determine:
-
-1. Is native Svelte/browser functionality sufficient?
-2. Is the functionality already provided by SvelteKit?
-3. Is Bits UI sufficient?
-4. Does the dependency materially improve maintainability?
-5. Does it increase bundle size?
-6. Does it introduce unnecessary security or maintenance risk?
-7. Does it introduce a paid service or external dependency?
-
-Avoid dependency accumulation.
-
----
-
-# 44. Design Requirements
-
-The portfolio should be:
-
-* modern
-* professional
-* distinctive
-* restrained
-* technically credible
-* responsive
-* fast
-* accessible
-
-Avoid:
-
-* excessive gradients
-* generic AI-dashboard aesthetics
-* excessive glassmorphism
-* animation for its own sake
-* enormous text that makes the website difficult to navigate
-* overuse of cards
-* visual clutter
-* template-like layouts
-
-The design should make the work the primary subject.
-
----
-
-# 45. GitHub Presentation Requirements
-
-A repository card should be capable of displaying:
+Examples:
 
 ```text
-Repository name
-Description
-Primary language
-Stars
-Forks
-Topics
-Last updated
+PROFILE-001
+PROFILE-002
+
+EXP-001
+EXP-002
+
+EDU-001
+
+SKILL-001
+
+PROJECT-001
+
+GITHUB-001
+GITHUB-002
+GITHUB-003
+
+UI-001
+UI-002
+
+A11Y-001
+
+SEO-001
+
+PERF-001
+
+SEC-001
+
+DEPLOY-001
+
+TEST-001
 ```
 
-Example conceptual presentation:
+---
+
+# 54. Traceability
+
+Every significant requirement must map to verification.
 
 ```text
-CHECKSTAR
-
-Digital supermarket platform...
-
-Vue · Laravel · TypeScript
-
-★ 12    Forks 3
-
-supermarket
-laravel
-vue
-typescript
-
-Updated 3 days ago
-
-[View project] [GitHub]
+Requirement
+    ↓
+Acceptance Criterion
+    ↓
+System Test
+    ↓
+Integration Test
+    ↓
+Unit / White-Box Test
+    ↓
+Implementation
 ```
 
-The exact visual implementation is determined during UI design.
+---
+
+# 55. Example Traceability
+
+| Requirement             | Unit | Integration | E2E | Acceptance |
+| ----------------------- | ---- | ----------- | --- | ---------- |
+| Profile information     | ✓    | ✓           | ✓   | ✓          |
+| Experience timeline     | ✓    | ✓           | ✓   | ✓          |
+| Project pages           | ✓    | ✓           | ✓   | ✓          |
+| GitHub metadata         | ✓    | ✓           | ✓   | ✓          |
+| GitHub failure handling | ✓    | ✓           | ✓   | ✓          |
+| Responsive navigation   | —    | ✓           | ✓   | ✓          |
+| Accessibility           | —    | —           | ✓   | ✓          |
+| SEO                     | —    | ✓           | ✓   | ✓          |
+| CV download             | —    | ✓           | ✓   | ✓          |
+| Deployment              | —    | —           | ✓   | ✓          |
 
 ---
 
-# 46. Data Freshness
+# 56. Acceptance Tests
 
-Repository metadata does not need to update in real time.
+## AT-001 — Homepage
 
-The acceptable requirement is:
+Given a visitor opens the portfolio:
 
-> Changes to public GitHub metadata should propagate automatically within the application's configured revalidation window without requiring a source-code change.
+Then:
 
-The initial revalidation strategy should prioritize:
-
-* low GitHub API usage
-* low Worker execution
-* resilience
-* acceptable freshness
-
-rather than real-time synchronization.
+* identity is immediately understandable
+* primary positioning is visible
+* major navigation is accessible
+* selected work is discoverable
 
 ---
 
-# 47. Failure State Requirements
+## AT-002 — About
 
-If GitHub metadata cannot be retrieved:
+Given a visitor opens About:
 
-The UI shall prefer:
+Then they can understand:
+
+* professional background
+* development journey
+* technical direction
+* education
+* current interests
+
+without reading the entire CV.
+
+---
+
+## AT-003 — Experience
+
+Given a visitor opens Experience:
+
+Then professional and training experiences are distinguishable.
+
+---
+
+## AT-004 — Projects
+
+Given a featured project exists:
+
+Then its project page provides meaningful contextual information rather than simply linking to GitHub.
+
+---
+
+## AT-005 — GitHub
+
+Given public repositories are available:
+
+Then the portfolio can retrieve and display supported repository metadata.
+
+---
+
+## AT-006 — GitHub Automatic Updates
+
+Given repository metadata changes:
+
+Then the portfolio eventually reflects the updated metadata without source-code modification.
+
+---
+
+## AT-007 — GitHub Failure
+
+Given GitHub becomes unavailable:
+
+Then the portfolio remains usable and does not expose raw server errors.
+
+---
+
+## AT-008 — CV
+
+Given the user selects CV:
+
+Then the correct CV document opens/downloads successfully.
+
+---
+
+## AT-009 — Mobile
+
+Given a mobile viewport:
+
+Then:
+
+* navigation works
+* content fits
+* cards are usable
+* buttons remain accessible
+* no unintended horizontal scrolling occurs
+
+---
+
+## AT-010 — Accessibility
+
+Given keyboard-only navigation:
+
+Then critical application functionality remains usable.
+
+---
+
+## AT-011 — Production
+
+Given all critical CI checks pass:
+
+Then production deployment succeeds and the public URL responds successfully.
+
+---
+
+# 57. Definition of Done
+
+A feature is complete only when:
 
 ```text
-cached data
-```
-
-then:
-
-```text
-static portfolio metadata
-```
-
-then:
-
-```text
-graceful unavailable state
-```
-
-It shall not present:
-
-```text
-500 GitHub API Error
-```
-
-to normal visitors.
-
----
-
-# 48. Observability
-
-Production issues should be diagnosable without creating unnecessary paid dependencies.
-
-The application should provide:
-
-* structured server-side logging where useful
-* meaningful error messages
-* environment-aware logging
-* deployment visibility
-* client-safe error handling
-
-Avoid logging:
-
-* secrets
-* tokens
-* unnecessary personal data
-
----
-
-# 49. Resume/CV
-
-The portfolio may expose a downloadable PDF CV.
-
-The file should:
-
-* be accessible
-* have a meaningful filename
-* open correctly
-* not block page loading
-* have an appropriate link label
-
-The CV is a static asset and should be served through the static delivery path.
-
----
-
-# 50. Contact Functionality
-
-The initial portfolio may provide:
-
-```text
-email link
-GitHub
-LinkedIn
-other professional links
-```
-
-A custom contact form should only be introduced if there is a justified backend/email delivery architecture that remains compatible with the project's cost requirements.
-
-A contact form must not be implemented merely to make the site look more complete.
-
----
-
-# 51. Security Testing
-
-Tests should cover:
-
-* secret exposure
-* unsafe rendering
-* malformed external data
-* invalid routes
-* unexpected API responses
-* server error leakage
-* unauthorized access to any server-only functionality
-
----
-
-# 52. Performance Acceptance Criteria
-
-The application shall not introduce unnecessary client-side processing.
-
-Performance review must explicitly inspect:
-
-* bundle size
-* JavaScript execution
-* image payloads
-* font loading
-* third-party requests
-* API request frequency
-* animation cost
-* mobile performance
-
-The application should remain useful if non-essential external services fail.
-
----
-
-# 53. Definition of Done
-
-A feature is **not done** merely because it works manually.
-
-A feature is complete when:
-
-```text
-Requirement exists
+Requirement identified
         AND
-Acceptance criteria exist
+Acceptance criteria written
         AND
-Tests exist
+Tests defined
         AND
-Tests failed before implementation where TDD applies
+TDD implementation completed
         AND
-Implementation exists
-        AND
-Unit/white-box tests pass
+Unit tests pass
         AND
 Integration tests pass
         AND
-Relevant E2E tests pass
+E2E tests pass where relevant
         AND
-Responsive behavior verified
+Accessibility checked
         AND
-Accessibility considered
+Responsive behavior checked
         AND
-Error states verified
+Failure states checked
         AND
 Production build passes
         AND
-No regression introduced
+No critical regression exists
 ```
 
 ---
 
-# 54. Definition of Production Ready
+# 58. Engineering Agent Instructions
 
-The portfolio is production-ready when:
+Any AI coding agent working on this repository must:
 
-* all critical requirements are implemented
-* all critical tests pass
-* production build succeeds
-* CI succeeds
-* E2E tests succeed
-* responsive layouts are verified
-* accessibility checks pass
-* critical GitHub integration paths work
-* GitHub failure handling works
-* no secrets are exposed
-* SEO requirements are satisfied
-* static assets load correctly
-* Cloudflare deployment succeeds
-* production URL is accessible
-* no known critical defects remain
+1. inspect the repository before changing it
+2. read the relevant requirements
+3. identify acceptance criteria
+4. write/define tests
+5. implement the smallest correct solution
+6. run tests
+7. review the implementation critically
+8. inspect actual UI in a browser
+9. run regression tests
+10. avoid unnecessary dependencies
+11. avoid unnecessary architecture
+12. never weaken tests simply to make CI green
+13. never introduce paid services without approval
 
 ---
 
-# 55. Development Phases
+# 59. Agent Self-Review
 
-## Phase 0 — Repository and Tooling
+Before declaring a feature complete, the agent must ask:
 
-Establish:
+### Product
+
+Does this actually improve the portfolio?
+
+### UX
+
+Is the flow intuitive?
+
+### UI
+
+Does it look intentional rather than generated/template-like?
+
+### Mobile
+
+Does it work on narrow screens?
+
+### Accessibility
+
+Can it be used without a mouse?
+
+### Engineering
+
+Is the architecture clean?
+
+### Testing
+
+Are success and failure paths covered?
+
+### Performance
+
+Did this introduce unnecessary JavaScript or network requests?
+
+### Security
+
+Are external inputs and secrets handled safely?
+
+### Maintenance
+
+Would another developer understand this code?
+
+---
+
+# 60. Phase Plan
+
+## Phase 0 — Foundation
+
+Set up:
 
 * SvelteKit
+* Svelte 5
 * TypeScript
+* Tailwind
 * Bits UI
-* styling system
-* testing framework
+* Vitest
 * Playwright
 * linting
 * formatting
-* Cloudflare configuration
-* CI baseline
-
-No visual polish should be prioritized before the engineering foundation works.
+* Cloudflare
+* CI
 
 ---
 
-## Phase 1 — Requirements and Architecture
+## Phase 1 — Requirements & Architecture
 
-Produce:
+Create:
 
-* route map
-* component architecture
+* information architecture
 * data models
-* GitHub integration design
-* caching design
-* testing strategy
-* traceability matrix
+* project model
+* GitHub model
+* testing matrix
+* deployment model
+* design system foundations
 
 ---
 
-## Phase 2 — Core Shell
+## Phase 2 — Core UI
 
-Implement and test:
+Implement:
 
 * root layout
 * navigation
-* responsive navigation
 * footer
-* typography
 * design tokens
-* global accessibility behavior
-* page transition system
+* responsive behavior
+* typography
+* motion foundations
 
 ---
 
-## Phase 3 — Home Page
+## Phase 3 — Professional Content
 
 Implement:
 
-* hero
+* Home
+* About
+* Experience
+* Education
+* Skills
+* Certification
+* CV integration
+
+---
+
+## Phase 4 — Work
+
+Implement:
+
 * selected projects
-* professional summary
-* calls to action
-
-Complete corresponding unit, integration and E2E tests.
-
----
-
-## Phase 4 — Projects
-
-Implement:
-
-* project model
-* featured projects
-* project listing
+* project cards
 * project detail pages
-* project case-study structure
+* case studies
+* technology relationships
 
 ---
 
-## Phase 5 — GitHub Integration
+## Phase 5 — GitHub
 
 Implement:
 
 ```text
-GitHub API adapter
-      ↓
-normalization
-      ↓
-cache/revalidation
-      ↓
+GitHub API
+   ↓
+adapter
+   ↓
+normalizer
+   ↓
+cache
+   ↓
 repository UI
 ```
-
-Develop tests before or alongside each implementation stage.
 
 ---
 
@@ -1670,363 +1844,252 @@ Develop tests before or alongside each implementation stage.
 
 Perform:
 
-* white-box analysis
-* branch coverage review
-* integration verification
-* accessibility verification
-* responsive testing
+* white-box testing
+* branch/condition analysis
+* integration testing
 * E2E testing
-* visual regression review
-* performance review
+* accessibility testing
+* responsive testing
+* visual testing
+* performance testing
 * security review
 
 ---
 
-## Phase 7 — Production Deployment
+## Phase 7 — Production
 
-Deploy to:
+Deploy:
 
 ```text
+Cloudflare Workers
+        ↓
 *.workers.dev
 ```
 
-Verify the production application.
-
-Then optionally attach:
+Then optionally connect:
 
 ```text
 yourname.dev
 ```
 
-without modifying the core application architecture.
+---
+
+# 61. Future Extensibility
+
+The architecture may later support:
+
+* Cloudflare D1
+* Cloudflare KV
+* R2
+* richer project CMS functionality
+* authenticated administration
+* blog/articles
+* technical notes
+* project statistics
+* GitHub activity visualizations
+* AI/data-science demos
+* cybersecurity labs
+* interactive experiments
+
+None of these should be implemented until justified by an actual requirement.
 
 ---
 
-# 56. Initial Acceptance Test Suite
+# 62. Final Product Structure
 
-The initial release should contain at least the following acceptance scenarios.
-
-### AT-001 — Homepage
+The intended experience is approximately:
 
 ```text
-Given a visitor opens the portfolio
-When the homepage loads
-Then the identity, professional positioning and primary navigation are visible
-And the page is usable without JavaScript-dependent animation
-```
-
-### AT-002 — Responsive Navigation
-
-```text
-Given a mobile viewport
-When the visitor opens navigation
-Then the navigation is accessible
-And all primary destinations can be reached
-And no content is clipped
-```
-
-### AT-003 — Featured Project
-
-```text
-Given a featured project exists
-When the visitor selects it
-Then the corresponding project page opens
-And project information is displayed
-And repository/live links are available when configured
-```
-
-### AT-004 — GitHub Metadata
-
-```text
-Given a public repository exists
-When repository information is retrieved
-Then the portfolio displays the supported repository metadata
-```
-
-### AT-005 — Automatic Update
-
-```text
-Given repository metadata changes on GitHub
-When the portfolio's cache becomes eligible for revalidation
-Then subsequent visitors eventually receive the updated metadata
-without modifying portfolio source code
-```
-
-### AT-006 — GitHub Failure
-
-```text
-Given GitHub is unavailable
-When a visitor loads repository information
-Then the portfolio remains usable
-And cached or fallback information is displayed where available
-And no raw server error is exposed
-```
-
-### AT-007 — Accessibility
-
-```text
-Given a keyboard-only visitor
-When they navigate the application
-Then every critical interactive function is reachable and usable
-```
-
-### AT-008 — Production Build
-
-```text
-Given the complete project
-When the production build executes
-Then the build completes successfully
-And the generated application can be deployed to Cloudflare
-```
-
-### AT-009 — Deployment
-
-```text
-Given all required CI checks pass
-When the production deployment executes
-Then the Cloudflare deployment succeeds
-And the public application responds successfully
+HOME
+ │
+ ├── Introduction
+ ├── Selected Work
+ ├── Technical Areas
+ ├── Experience Snapshot
+ └── GitHub
+        │
+        ▼
+WORK
+ │
+ ├── Featured Project
+ ├── Featured Project
+ ├── Featured Project
+ └── All / GitHub Work
+        │
+        ▼
+PROJECT
+ │
+ ├── Problem
+ ├── Solution
+ ├── Architecture
+ ├── Technology
+ ├── Testing
+ ├── Screenshots
+ └── Links
+        │
+        ▼
+ABOUT
+ │
+ ├── Story
+ ├── Skills
+ ├── Education
+ ├── Certification
+ └── Current Direction
+        │
+        ▼
+EXPERIENCE
+ │
+ ├── CustomConnect
+ ├── ExploreAI
+ ├── WeThinkCode_
+ └── Nova Smart Technologies
+        │
+        ▼
+GITHUB
+ │
+ └── Automatically updated repositories
+        │
+        ▼
+CV
+ │
+ └── Downloadable document
 ```
 
 ---
 
-# 57. Engineering Agent Instructions
+# 63. Final Professional Positioning
 
-Any AI coding agent working on this repository shall follow these rules.
+The portfolio should ultimately make the following distinction clear:
 
-## Rule 1
+```text
+                SOFTWARE DEVELOPMENT
+                        │
+         ┌──────────────┼──────────────┐
+         │              │              │
+         ▼              ▼              ▼
+        WEB          APPLICATION      MOBILE
+         │              │              │
+         └──────────────┼──────────────┘
+                        │
+                        ▼
+                  DATA / AI
+                        │
+                        ▼
+              CYBERSECURITY / CLOUD
+```
 
-Do not immediately start modifying code.
+Software development is the foundation.
 
-First inspect:
+Web/full-stack development is the strongest professional experience.
 
-* repository
-* existing files
-* package configuration
-* test configuration
-* deployment configuration
-* documentation
-* requirements
+Data science represents hands-on technical training and applied work.
 
----
+Cybersecurity and cloud represent important technical interests and ongoing development.
 
-## Rule 2
-
-Before implementing a significant feature:
-
-1. identify the requirement
-2. define acceptance criteria
-3. identify relevant tests
-4. implement tests
-5. implement the smallest correct solution
-6. run tests
-7. review the implementation
-8. refactor if justified
-9. run regression tests
+The portfolio should present these as interconnected parts of one developer rather than four separate identities.
 
 ---
 
-## Rule 3
+# 64. Final Product Principle
 
-Do not remove or weaken tests merely to make a build pass.
+The website should answer three questions quickly:
 
----
+### Who is this developer?
 
-## Rule 4
+A software developer with professional full-stack web experience and broader application, data and technical experience.
 
-Do not disable linting, type checking, coverage or E2E tests merely because they expose implementation problems.
+### What has this developer actually built?
 
----
+Real projects, supported by GitHub repositories, case studies and demonstrable technical work.
 
-## Rule 5
+### How does this developer build software?
 
-Do not install a package simply because it is convenient.
+Through structured engineering, testing, iteration, responsive design, maintainable architecture and production deployment.
 
-Investigate whether the existing stack already solves the problem.
-
----
-
-## Rule 6
-
-Do not introduce paid infrastructure without explicit approval.
+The portfolio itself must provide evidence for the third answer.
 
 ---
 
-## Rule 7
-
-Do not overengineer.
-
-The simplest architecture satisfying the requirements is preferred.
-
----
-
-## Rule 8
-
-Before considering a feature complete, inspect the resulting UI manually and through automated browser testing.
-
-A passing unit-test suite does not establish that the application is visually or interactively correct.
-
----
-
-# 58. Agent Self-Review Requirement
-
-Before declaring implementation complete, the agent must review:
-
-### Functional
-
-* Does the feature satisfy the requirement?
-
-### Structural
-
-* Is the architecture coherent?
-* Are concerns appropriately separated?
-
-### Testing
-
-* Are important branches tested?
-* Are failure states tested?
-* Are boundary conditions tested?
-
-### UI
-
-* Does it look intentional?
-* Does it work on mobile?
-* Does it work with keyboard navigation?
-* Does it handle loading/error/empty states?
-
-### Performance
-
-* Did this introduce unnecessary JavaScript?
-* Did it introduce unnecessary requests?
-
-### Security
-
-* Are secrets protected?
-* Is external data handled safely?
-
-### Maintenance
-
-* Is the implementation understandable?
-* Is the code more complex than necessary?
-
----
-
-# 59. Final Architectural Principle
-
-The portfolio must remain architecturally capable without becoming architecturally complicated.
-
-The intended final system is:
+# 65. Final Architecture
 
 ```text
                          GITHUB
                             │
-                            │ public repository data
-                            ▼
-                    ┌───────────────┐
-                    │ GitHub Adapter│
-                    └───────┬───────┘
+                     Public repositories
                             │
                             ▼
-                    ┌───────────────┐
-                    │ Normalization │
-                    └───────┬───────┘
+                    GitHub API Adapter
                             │
                             ▼
-                    ┌───────────────┐
-                    │ Cache / Data  │
-                    └───────┬───────┘
+                      Normalization
                             │
                             ▼
-┌───────────────────────────────────────────────────┐
-│                    SVELTEKIT                       │
-│                                                   │
-│  Home │ About │ Work │ Projects │ GitHub │ CV   │
-│                                                   │
-│              Bits UI + Custom Design              │
-│                                                   │
-└──────────────────────────┬────────────────────────┘
-                           │
-                           ▼
+                     Cache / Revalidation
+                            │
+                            ▼
+┌─────────────────────────────────────────────────┐
+│                    SVELTEKIT                    │
+│                                                 │
+│ Home │ Work │ About │ Experience │ GitHub │ CV│
+│                                                 │
+│              Bits UI + Custom UI               │
+│                                                 │
+│          TypeScript + Tailwind CSS              │
+└────────────────────────┬────────────────────────┘
+                         │
+                         ▼
                   CLOUDFLARE WORKERS
-                           │
-              ┌────────────┴─────────────┐
-              │                          │
-              ▼                          ▼
-       Static Assets                Dynamic APIs
-              │                          │
-              └────────────┬─────────────┘
-                           ▼
-                       INTERNET
-                           │
-                           ▼
-                  portfolio.workers.dev
-                           │
-                    optional later
-                           ▼
-                       yourname.dev
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+              ▼                     ▼
+       Static Assets           Dynamic Logic
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                     INTERNET
+                         │
+                         ▼
+                 *.workers.dev
+                         │
+                     optional
+                         ▼
+                    yourname.dev
 ```
-
-Cloudflare's current Workers architecture explicitly supports combining static assets with Worker logic, and its current SvelteKit guide supports deploying SvelteKit directly to Workers.
 
 ---
 
-# 60. Release Standard
+# 66. Release Standard
 
-The portfolio shall be considered a successful implementation only when it demonstrates all three dimensions simultaneously:
+The portfolio is successful only when all three dimensions are satisfied:
 
 ```text
-              ┌─────────────────┐
-              │   ENGINEERING   │
-              │                 │
-              │ architecture    │
-              │ testing         │
-              │ CI/CD           │
-              │ security        │
-              └────────┬────────┘
-                       │
-                       │
-        ┌──────────────┴──────────────┐
-        │                             │
-        ▼                             ▼
-┌─────────────────┐          ┌─────────────────┐
-│      DESIGN     │          │    EXPERIENCE   │
-│                 │          │                 │
-│ visual system   │          │ responsive      │
-│ typography      │          │ accessible      │
-│ motion          │          │ fast            │
-│ hierarchy       │          │ intuitive       │
-└─────────────────┘          └─────────────────┘
+                 ENGINEERING
+                     │
+           ┌─────────┴─────────┐
+           │                   │
+           ▼                   ▼
+        DESIGN             EXPERIENCE
+           │                   │
+           └─────────┬─────────┘
+                     │
+                     ▼
+             PROFESSIONAL VALUE
 ```
 
-None of these dimensions should be treated as a substitute for another.
+It must simultaneously be:
 
-A visually impressive portfolio with weak engineering is incomplete.
+* technically sound
+* visually intentional
+* fast
+* accessible
+* responsive
+* professionally credible
+* automatically maintainable
+* thoroughly tested
 
-A technically sound portfolio that looks unfinished is also incomplete.
+A polished interface without engineering quality is insufficient.
 
-The target is a portfolio that functions as a **live demonstration of engineering quality**.
+A technically impressive implementation that feels unfinished is also insufficient.
 
----
-
-# 61. Source-of-Truth Rule
-
-This document shall be treated as the baseline product specification.
-
-When implementation decisions conflict with the requirements:
-
-1. identify the conflict
-2. inspect the relevant requirement
-3. update the requirement if the product decision genuinely changed
-4. update tests
-5. update implementation
-6. rerun regression testing
-
-The implementation must not silently redefine the product requirements.
-
----
-
-# 62. Initial Success Definition
-
-The project succeeds when a stranger can receive the public URL, open it without installation or account creation, understand who the developer is, inspect meaningful projects, inspect current GitHub work, navigate the site comfortably on desktop and mobile, and perceive the website itself as evidence of competent software engineering.
-
-The application must achieve this while maintaining a deliberately low-cost infrastructure architecture and a rigorous TDD/STLC/V-Model development process.
+The portfolio itself is one of the developer's projects and must therefore meet the same engineering standards expected of the work it presents.
