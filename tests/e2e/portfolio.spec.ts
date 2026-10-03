@@ -90,7 +90,8 @@ test.describe('Built Cloudflare Worker — cache policy, routes, and static arti
 		expect(after.upstreamRequests).toBe(before.upstreamRequests);
 	});
 
-	test('bounds public SvelteKit data-cache variants to the route invalidation mask', async ({ request }) => {
+	test('bounds public SvelteKit data-cache variants to the route invalidation mask', async ({ request }, testInfo) => {
+		test.skip(testInfo.project.name !== 'chromium-desktop', 'Run the Worker API contract once per server.');
 		const before = await readMockState(request);
 		const malformedMask = await request.get(
 			'/github/__data.json?x-sveltekit-invalidated=111111',
@@ -302,13 +303,18 @@ test.describe('Portfolio journeys — desktop and mobile', () => {
 		await expect(projectCountHeading).toContainText('6');
 		await page.getByRole('tab', { name: 'Mobile' }).click();
 		await expect(page.getByRole('heading', { name: /Curated Case Studies/ })).toContainText('1');
-		await expect(page.getByRole('link', { name: /GreenBidder — Geospatial Agricultural Marketplace/i })).toBeVisible();
+		await expect(
+			page.getByRole('link', {
+				name: 'GreenBidder — Geospatial Agricultural Marketplace',
+				exact: true
+			})
+		).toBeVisible();
 	});
 
 	test('moves from About to Experience while preserving truthful career distinctions', async ({ page }) => {
 		await page.goto('/about');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Software Development at the Core');
-		await expect(page.getByText('AWS Cloud Practitioner')).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'AWS Cloud Practitioner' })).toBeVisible();
 		await page.getByRole('link', { name: 'View Experience Timeline' }).click();
 		await expect(page).toHaveURL(/\/experience$/);
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Professional Experience');
@@ -335,7 +341,7 @@ test.describe('Portfolio journeys — desktop and mobile', () => {
 		await expect(page.getByLabel('Message')).toHaveValue(
 			'Hello Yamkela, I would like to discuss an engineering role with you.'
 		);
-		await expect(page.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute(
+		await expect(page.getByRole('link', { name: 'LinkedIn — Yamkela Jojo' })).toHaveAttribute(
 			'href',
 			'https://www.linkedin.com/in/yamkela-jojo-911774217'
 		);
