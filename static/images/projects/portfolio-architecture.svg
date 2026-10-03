@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" width="960" height="320" role="img" aria-labelledby="arch-p-title">
+  <title id="arch-p-title">Portfolio GitHub Normalization and Multi-Tier Cache Pipeline</title>
+  <rect width="960" height="320" rx="8" fill="#fbf9f5" stroke="#dcd5c7"/>
+  <text x="32" y="40" font-family="monospace" font-size="13" font-weight="700" fill="#a83e1d">ARCHITECTURE BLUEPRINT // SVELTEKIT + CLOUDFLARE WORKERS + GITHUB ADAPTER</text>
+  <g font-family="monospace" font-size="12" fill="#161615">
+    <rect x="32" y="80" width="145" height="90" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="104" y="118" text-anchor="middle" font-weight="700">GitHub REST API</text>
+    <text x="104" y="140" text-anchor="middle" fill="#625e57">/users/yamkelajojo</text>
+
+    <text x="193" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="210" y="80" width="165" height="90" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="292" y="118" text-anchor="middle" font-weight="700">Adapter &amp; Normalizer</text>
+    <text x="292" y="140" text-anchor="middle" fill="#625e57">Schema + URL Guard</text>
+
+    <text x="392" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="410" y="80" width="165" height="90" rx="6" fill="#dff0e8" stroke="#a8d8c2"/>
+    <text x="492" y="118" text-anchor="middle" font-weight="700" fill="#114b36">TTL + SWR Cache</text>
+    <text x="492" y="140" text-anchor="middle" fill="#114b36">15m Fresh / 24h Stale</text>
+
+    <text x="592" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="610" y="80" width="150" height="90" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="685" y="118" text-anchor="middle" font-weight="700">SvelteKit SSR</text>
+    <text x="685" y="140" text-anchor="middle" fill="#625e57">Case Study Enrichment</text>
+
+    <text x="776" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="792" y="80" width="136" height="90" rx="6" fill="#161615"/>
+    <text x="860" y="118" text-anchor="middle" font-weight="700" fill="#f7f4ee">Svelte 5 UI</text>
+    <text x="860" y="140" text-anchor="middle" fill="#c7c2b9">Bits UI + A11y</text>
+  </g>
+  <rect x="32" y="205" width="896" height="75" rx="6" fill="#f6ead4" stroke="#dfc392"/>
+  <text x="52" y="235" font-family="monospace" font-size="12" font-weight="700" fill="#654108">RESILIENCE TIER // GRACEFUL DEGRADATION</text>
+  <text x="52" y="258" font-family="monospace" font-size="12" fill="#654108">1. Fresh Cache (0 API calls) → 2. Live GitHub Fetch → 3. Stale Cache Fallback → 4. Verified Repository Snapshot</text>
+</svg>

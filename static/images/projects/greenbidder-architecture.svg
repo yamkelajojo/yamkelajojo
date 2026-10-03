@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" width="960" height="320" role="img" aria-labelledby="arch-gb-title">
+  <title id="arch-gb-title">GreenBidder Geospatial Marketplace Relational and PostGIS Schema</title>
+  <rect width="960" height="320" rx="8" fill="#fbf9f5" stroke="#dcd5c7"/>
+  <text x="32" y="40" font-family="monospace" font-size="13" font-weight="700" fill="#a83e1d">SCHEMA BLUEPRINT // REACT NATIVE (EXPO 54) + ZOD + SUPABASE POSTGRESQL / POSTGIS</text>
+  <g font-family="monospace" font-size="12" fill="#161615">
+    <rect x="32" y="76" width="190" height="100" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="127" y="110" text-anchor="middle" font-weight="700">Expo + Tamagui App</text>
+    <text x="127" y="132" text-anchor="middle" fill="#625e57">Farmer &amp; Buyer Stacks</text>
+    <text x="127" y="152" text-anchor="middle" fill="#a83e1d">Zod Schema Validation</text>
+
+    <text x="242" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="262" y="76" width="200" height="100" rx="6" fill="#e3ecf8" stroke="#b3c9e8"/>
+    <text x="362" y="110" text-anchor="middle" font-weight="700" fill="#183f6e">Supabase Auth + RLS</text>
+    <text x="362" y="132" text-anchor="middle" fill="#183f6e">users (role: farmer/buyer)</text>
+    <text x="362" y="152" text-anchor="middle" fill="#183f6e">Row-Level Security Policies</text>
+
+    <text x="482" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="502" y="76" width="210" height="100" rx="6" fill="#dff0e8" stroke="#a8d8c2"/>
+    <text x="607" y="110" text-anchor="middle" font-weight="700" fill="#114b36">PostGIS Geography</text>
+    <text x="607" y="132" text-anchor="middle" fill="#114b36">GEOGRAPHY(POINT, 4326)</text>
+    <text x="607" y="152" text-anchor="middle" fill="#114b36">preferred_radius_km</text>
+
+    <text x="730" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="748" y="76" width="180" height="100" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="838" y="110" text-anchor="middle" font-weight="700">produce_listings</text>
+    <text x="838" y="132" text-anchor="middle" fill="#625e57">listing_images</text>
+    <text x="838" y="152" text-anchor="middle" fill="#625e57">listing_interactions</text>
+  </g>
+  <rect x="32" y="205" width="896" height="75" rx="6" fill="#efeae0" stroke="#dcd5c7"/>
+  <text x="52" y="235" font-family="monospace" font-size="12" font-weight="700" fill="#161615">DATABASE MIGRATION (gbdb.sql) // 12 RELATIONAL TABLES</text>
+  <text x="52" y="258" font-family="monospace" font-size="12" fill="#43413c">users · farmer_profiles · buyer_profiles · produce_categories · produce_listings · user_produce_preferences · interactions</text>
+</svg>

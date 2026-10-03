@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="og-title og-desc">
+  <title id="og-title">Yamkela Jojo — Full-Stack &amp; Software Developer</title>
+  <desc id="og-desc">Software and Full-Stack Web Developer experienced across Laravel, PHP, Vue.js, SvelteKit, TypeScript, React Native, Python, and SQL.</desc>
+  <rect width="1200" height="630" fill="#f7f4ee"/>
+  <rect x="40" y="40" width="1120" height="550" rx="12" fill="#ffffff" stroke="#dcd5c7" stroke-width="2"/>
+  <rect x="88" y="88" width="56" height="56" rx="8" fill="#161615"/>
+  <text x="116" y="124" font-family="monospace" font-size="24" font-weight="700" fill="#f7f4ee" text-anchor="middle">YJ</text>
+  <text x="88" y="210" font-family="monospace" font-size="16" font-weight="600" fill="#a83e1d" letter-spacing="2">DURBAN, SOUTH AFRICA · FULL-STACK &amp; SOFTWARE ENGINEERING</text>
+  <text x="88" y="280" font-family="sans-serif" font-size="56" font-weight="700" fill="#161615">Yamkela Jojo</text>
+  <text x="88" y="340" font-family="Georgia, serif" font-size="34" fill="#43413c">Full-Stack &amp; Software Developer building reliable web platforms,</text>
+  <text x="88" y="385" font-family="Georgia, serif" font-size="34" fill="#43413c">internal business systems, and data-informed applications.</text>
+  <line x1="88" y1="440" x2="1112" y2="440" stroke="#dcd5c7" stroke-width="1.5"/>
+  <text x="88" y="490" font-family="monospace" font-size="18" fill="#161615">Laravel · PHP · Vue.js · SvelteKit · TypeScript · React Native · Python · SQL</text>
+  <text x="88" y="535" font-family="monospace" font-size="16" fill="#625e57">github.com/yamkelajojo · CustomConnect · WeThinkCode_ · ExploreAI · Walter Sisulu University</text>
+</svg>

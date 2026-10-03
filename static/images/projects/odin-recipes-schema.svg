@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" width="960" height="320" role="img" aria-labelledby="arch-or-title">
+  <title id="arch-or-title">Odin Recipes Normalized Eloquent Domain Model</title>
+  <rect width="960" height="320" rx="8" fill="#fbf9f5" stroke="#dcd5c7"/>
+  <text x="32" y="40" font-family="monospace" font-size="13" font-weight="700" fill="#a83e1d">DOMAIN MODEL BLUEPRINT // LARAVEL 12 + ELOQUENT ORM + INERTIA.JS + VUE 3</text>
+  <g font-family="monospace" font-size="12" fill="#161615">
+    <rect x="32" y="80" width="195" height="95" rx="6" fill="#ffffff" stroke="#b4ab9b"/>
+    <text x="129" y="115" text-anchor="middle" font-weight="700">FoodCategory &amp; Recipe</text>
+    <text x="129" y="138" text-anchor="middle" fill="#625e57">1:N Category Hierarchy</text>
+    <text x="129" y="156" text-anchor="middle" fill="#625e57">RecipeImage Gallery</text>
+
+    <text x="247" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="267" y="80" width="215" height="95" rx="6" fill="#dff0e8" stroke="#a8d8c2"/>
+    <text x="374" y="115" text-anchor="middle" font-weight="700" fill="#114b36">RecipeIngredient Pivot</text>
+    <text x="374" y="138" text-anchor="middle" fill="#114b36">Ingredient + Unit Models</text>
+    <text x="374" y="156" text-anchor="middle" fill="#114b36">Normalized Quantities</text>
+
+    <text x="502" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="522" y="80" width="215" height="95" rx="6" fill="#e3ecf8" stroke="#b3c9e8"/>
+    <text x="629" y="115" text-anchor="middle" font-weight="700" fill="#183f6e">PreparationStage</text>
+    <text x="629" y="138" text-anchor="middle" fill="#183f6e">PreparationStageStep</text>
+    <text x="629" y="156" text-anchor="middle" fill="#183f6e">Ordered Multi-Stage Flow</text>
+
+    <text x="755" y="128" text-anchor="middle" fill="#a83e1d" font-weight="700">→</text>
+
+    <rect x="772" y="80" width="156" height="95" rx="6" fill="#161615"/>
+    <text x="850" y="115" text-anchor="middle" font-weight="700" fill="#f7f4ee">Inertia + Vue 3</text>
+    <text x="850" y="138" text-anchor="middle" fill="#c7c2b9">Tailwind CSS UI</text>
+    <text x="850" y="156" text-anchor="middle" fill="#c7c2b9">/recipes/fetch</text>
+  </g>
+  <rect x="32" y="205" width="896" height="75" rx="6" fill="#efeae0" stroke="#dcd5c7"/>
+  <text x="52" y="235" font-family="monospace" font-size="12" font-weight="700" fill="#161615">FULL-STACK ARCHITECTURE // PHP 8.2 + LARAVEL + SQLITE/MYSQL</text>
+  <text x="52" y="258" font-family="monospace" font-size="12" fill="#43413c">Separates preparation stages from individual steps and links reusable ingredients to measurement units.</text>
+</svg>

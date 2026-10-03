@@ -1,0 +1,289 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   1. Josh W. Comeau's Modern CSS Reset (Current June 2026 Reference)
+   Source: https://www.joshwcomeau.com/css/custom-css-reset/
+   Adapted for SvelteKit (#sveltekit-root) and Bits UI primitives.
+   ========================================================================== */
+
+/* 1. Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* 2. Remove default margin (excluding native <dialog> centering) */
+*:not(dialog) {
+	margin: 0;
+}
+
+/* 3. Enable keyword animations when motion is permitted */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		interpolate-size: allow-keywords;
+		scroll-behavior: smooth;
+	}
+}
+
+body {
+	/* 4. Increase line-height */
+	line-height: 1.5;
+	/* 5. Improve text rendering */
+	-webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+	text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+}
+
+/* 10. Create a root stacking context */
+#root,
+#__next,
+#sveltekit-root {
+	isolation: isolate;
+}
+
+/* ==========================================================================
+   2. Editorial Design System Tokens (Warm Archival Light & Obsidian Dark)
+   ========================================================================== */
+
+:root,
+html.theme-light {
+	--bg-canvas: #f7f4ee;
+	--bg-surface: #ffffff;
+	--bg-subtle: #efeae0;
+	--bg-elevated: #fbf9f5;
+	--text-primary: #161615;
+	--text-secondary: #43413c;
+	--text-muted: #625e57;
+	--border-subtle: #dcd5c7;
+	--border-strong: #b4ab9b;
+	--accent-primary: #a83e1d;
+	--accent-primary-hover: #893014;
+	--accent-soft: #f6e4dd;
+	--focus-ring: #a83e1d;
+
+	/* Context & Status Tokens */
+	--status-pro-bg: #dff0e8;
+	--status-pro-text: #114b36;
+	--status-pro-border: #a8d8c2;
+
+	--status-handson-bg: #e3ecf8;
+	--status-handson-text: #183f6e;
+	--status-handson-border: #b3c9e8;
+
+	--status-training-bg: #f6ead4;
+	--status-training-text: #654108;
+	--status-training-border: #dfc392;
+
+	--status-exploring-bg: #ece7f6;
+	--status-exploring-text: #452d6d;
+	--status-exploring-border: #c8bae4;
+
+	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--font-display: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
+	--font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, SFMono-Regular, monospace;
+
+	color-scheme: light;
+}
+
+html.theme-dark {
+	--bg-canvas: #0f1110;
+	--bg-surface: #161918;
+	--bg-subtle: #1d211f;
+	--bg-elevated: #1a1e1c;
+	--text-primary: #f3f0ea;
+	--text-secondary: #c7c2b9;
+	--text-muted: #9a948a;
+	--border-subtle: #2a2f2c;
+	--border-strong: #414844;
+	--accent-primary: #e87a56;
+	--accent-primary-hover: #f29273;
+	--accent-soft: #2e1b15;
+	--focus-ring: #e87a56;
+
+	--status-pro-bg: #132c23;
+	--status-pro-text: #7be0b9;
+	--status-pro-border: #235342;
+
+	--status-handson-bg: #152538;
+	--status-handson-text: #94c5fa;
+	--status-handson-border: #27466b;
+
+	--status-training-bg: #2e2310;
+	--status-training-text: #f4c873;
+	--status-training-border: #59431d;
+
+	--status-exploring-bg: #251d35;
+	--status-exploring-text: #ccb6f5;
+	--status-exploring-border: #473766;
+
+	color-scheme: dark;
+}
+
+/* ==========================================================================
+   3. Base Typography, Focus States & Layout Utilities
+   ========================================================================== */
+
+body {
+	background-color: var(--bg-canvas);
+	color: var(--text-primary);
+	font-family: var(--font-sans);
+	min-height: 100dvh;
+	overflow-x: hidden;
+	transition:
+		background-color 180ms ease,
+		color 180ms ease;
+}
+
+:focus-visible {
+	outline: 2px solid var(--focus-ring);
+	outline-offset: 3px;
+}
+
+/* Skip link for keyboard users (A11Y-001) */
+.skip-link {
+	position: fixed;
+	top: 0.75rem;
+	left: 0.75rem;
+	z-index: 100;
+	padding: 0.625rem 1rem;
+	background-color: var(--text-primary);
+	color: var(--bg-canvas);
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	border-radius: 0.375rem;
+	text-decoration: none;
+	transform: translateY(-200%);
+	transition: transform 150ms ease;
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}
+
+/* Editorial container and hairline grid helpers */
+.editorial-container {
+	width: 100%;
+	max-width: 76rem;
+	margin-inline: auto;
+	padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.section-kicker {
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--accent-primary);
+}
+
+.editorial-card {
+	background-color: var(--bg-surface);
+	border: 1px solid var(--border-subtle);
+	border-radius: 0.5rem;
+	transition:
+		border-color 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease;
+}
+
+.editorial-card:hover {
+	border-color: var(--border-strong);
+}
+
+/* Context Badges */
+.badge-pro {
+	background-color: var(--status-pro-bg);
+	color: var(--status-pro-text);
+	border: 1px solid var(--status-pro-border);
+}
+
+.badge-handson {
+	background-color: var(--status-handson-bg);
+	color: var(--status-handson-text);
+	border: 1px solid var(--status-handson-border);
+}
+
+.badge-training {
+	background-color: var(--status-training-bg);
+	color: var(--status-training-text);
+	border: 1px solid var(--status-training-border);
+}
+
+.badge-exploring,
+.badge-learning {
+	background-color: var(--status-exploring-bg);
+	color: var(--status-exploring-text);
+	border: 1px solid var(--status-exploring-border);
+}
+
+/* Respect Reduced Motion (A11Y-001 / SPECS_PRD Section 36) */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Print optimization for /cv */
+@media print {
+	header,
+	footer,
+	.no-print {
+		display: none !important;
+	}
+	body {
+		background: #ffffff !important;
+		color: #000000 !important;
+	}
+	.editorial-card {
+		border-color: #cccccc !important;
+		box-shadow: none !important;
+	}
+}
