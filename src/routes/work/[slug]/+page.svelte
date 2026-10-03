@@ -2,12 +2,10 @@
 	import { Accordion } from 'bits-ui';
 	import SeoHead from '$lib/components/shared/SeoHead.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
-	import { formatIsoDate, getLanguageColor } from '$lib/utils/format';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const project = $derived(data.project);
-	const githubRepo = $derived(data.githubRepo);
 </script>
 
 <SeoHead
@@ -18,7 +16,7 @@
 	ogType="article"
 />
 
-<article class="py-12 sm:py-16">
+<article class="py-section-compact sm:py-section-regular">
 	<div class="editorial-container">
 		<!-- Breadcrumb -->
 		<nav aria-label="Breadcrumb" class="mb-6">
@@ -88,7 +86,7 @@
 							target="_blank"
 							rel="noopener noreferrer"
 							class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold"
-							style="background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);"
+							style="background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);"
 						>
 							<Icon name="github" size={15} />
 							<span>Open GitHub Repository</span>
@@ -292,7 +290,7 @@
 				{/if}
 			</div>
 
-			<!-- Right Sidebar: Technology Stack & Live GitHub Repository Metadata -->
+			<!-- Right Sidebar: Curated Technology Stack -->
 			<aside class="space-y-6 lg:col-span-4">
 				<div class="editorial-card p-6">
 					<h2
@@ -313,58 +311,6 @@
 					</div>
 				</div>
 
-				{#if githubRepo}
-					<div class="editorial-card p-6">
-						<div class="flex items-center justify-between gap-2">
-							<h2
-								class="text-xs font-semibold uppercase tracking-wider"
-								style="font-family: var(--font-mono); color: var(--text-muted);"
-							>
-								Live GitHub Metadata
-							</h2>
-							<Icon name="github" size={15} />
-						</div>
-
-						<p class="mt-2 font-semibold" style="font-family: var(--font-mono); color: var(--text-primary);">
-							{githubRepo.fullName}
-						</p>
-
-						<dl class="mt-4 space-y-2.5 border-t pt-3 text-xs" style="border-color: var(--border-subtle); font-family: var(--font-mono);">
-							<div class="flex justify-between">
-								<dt style="color: var(--text-muted);">Primary Language</dt>
-								<dd class="inline-flex items-center gap-1.5" style="color: var(--text-primary);">
-									<span
-										class="inline-block h-2 w-2 rounded-full"
-										style="background-color: {getLanguageColor(githubRepo.language)};"
-									></span>
-									<span>{githubRepo.language ?? 'Multi-language'}</span>
-								</dd>
-							</div>
-							<div class="flex justify-between">
-								<dt style="color: var(--text-muted);">Stars / Forks</dt>
-								<dd style="color: var(--text-primary);">{githubRepo.stars} ★ · {githubRepo.forks} forks</dd>
-							</div>
-							<div class="flex justify-between">
-								<dt style="color: var(--text-muted);">Last Pushed</dt>
-								<dd style="color: var(--text-primary);">
-									{formatIsoDate(githubRepo.pushedAt ?? githubRepo.updatedAt)}
-								</dd>
-							</div>
-						</dl>
-
-						<a
-							href={githubRepo.htmlUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="mt-5 flex w-full items-center justify-center gap-2 rounded-md border px-3 py-2 text-xs font-semibold"
-							style="border-color: var(--border-strong); color: var(--accent-primary); font-family: var(--font-mono);"
-						>
-							<Icon name="github" size={14} />
-							<span>Inspect Repository on GitHub</span>
-							<Icon name="arrow-up-right" size={12} />
-						</a>
-					</div>
-				{/if}
 			</aside>
 		</div>
 

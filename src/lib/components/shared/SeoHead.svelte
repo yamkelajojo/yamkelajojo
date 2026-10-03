@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import {
 		buildPageSeo,
 		buildPersonJsonLd,
@@ -13,18 +14,19 @@
 		ogType = 'website'
 	}: PageSeoInput = $props();
 
+	const siteOrigin = $derived(page.data.siteOrigin);
 	const seo = $derived(
 		buildPageSeo({
 			title,
 			description,
 			path,
 			imagePath,
-			ogType
+			ogType,
+			baseUrl: siteOrigin
 		})
 	);
-
 	const jsonLdScript = $derived(
-		`<script type="application/ld+json">${buildPersonJsonLd()}<` + '/script>'
+		`<script type="application/ld+json">${buildPersonJsonLd(siteOrigin)}<` + '/script>'
 	);
 </script>
 

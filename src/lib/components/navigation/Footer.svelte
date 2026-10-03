@@ -6,7 +6,7 @@
 </script>
 
 <footer
-	class="mt-20 border-t py-12"
+	class="mt-section-generous border-t py-section-compact"
 	style="border-color: var(--border-subtle); background-color: var(--bg-subtle);"
 >
 	<div class="editorial-container">

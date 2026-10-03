@@ -1,9 +1,9 @@
 import type { GitHubRepository } from '$lib/types';
 
 /**
- * Verified snapshot of github.com/yamkelajojo public repositories.
- * Used only as a last-resort fallback if GitHub REST API is unreachable or rate-limited
- * and no in-memory/edge cached response exists.
+ * Small, maintained snapshot of public repository metadata. It is deliberately
+ * not timestamped as a live synchronization and is only returned when the GitHub
+ * API cannot be reached or its response cannot be trusted.
  */
 const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 	{
@@ -20,6 +20,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2026-10-03T03:36:18Z',
 		updatedAt: '2026-10-03T07:13:14Z',
 		pushedAt: '2026-10-03T07:13:11Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -37,6 +39,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2026-04-10T09:39:24Z',
 		updatedAt: '2026-05-05T18:28:58Z',
 		pushedAt: '2026-09-21T04:34:48Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -53,6 +57,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2025-08-11T20:31:16Z',
 		updatedAt: '2025-08-11T20:53:23Z',
 		pushedAt: '2025-08-11T20:53:20Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -70,6 +76,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2025-01-11T19:25:51Z',
 		updatedAt: '2025-05-10T01:17:34Z',
 		pushedAt: '2025-05-10T01:17:31Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -87,6 +95,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2024-04-02T08:09:59Z',
 		updatedAt: '2024-04-11T23:46:40Z',
 		pushedAt: '2024-04-12T12:15:10Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -104,6 +114,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2024-02-15T14:14:30Z',
 		updatedAt: '2024-03-06T11:34:12Z',
 		pushedAt: '2024-03-12T23:28:18Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -120,6 +132,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2024-02-13T14:10:37Z',
 		updatedAt: '2024-02-22T12:11:36Z',
 		pushedAt: '2024-03-07T18:51:05Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: true,
 		isArchived: false
 	},
@@ -136,6 +150,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2024-01-19T14:47:28Z',
 		updatedAt: '2024-01-19T14:47:28Z',
 		pushedAt: '2023-11-20T16:23:33Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: true,
 		isArchived: false
 	},
@@ -153,6 +169,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2023-06-10T13:19:37Z',
 		updatedAt: '2023-06-17T13:53:12Z',
 		pushedAt: '2023-08-29T07:11:04Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: false,
 		isArchived: false
 	},
@@ -169,6 +187,8 @@ const FALLBACK_REPOSITORIES: GitHubRepository[] = [
 		createdAt: '2024-03-21T16:21:28Z',
 		updatedAt: '2024-04-02T08:07:23Z',
 		pushedAt: '2023-07-28T13:41:23Z',
+		defaultBranch: null,
+		visibility: 'public',
 		isFork: true,
 		isArchived: false
 	}

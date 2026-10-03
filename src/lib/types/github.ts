@@ -8,21 +8,29 @@ export type GitHubRepository = {
 	stars: number;
 	forks: number;
 	topics: string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt: string | null;
+	updatedAt: string | null;
 	pushedAt: string | null;
-	defaultBranch?: string;
-	visibility?: string;
-	isFork?: boolean;
-	isArchived?: boolean;
+	defaultBranch: string | null;
+	visibility: string | null;
+	isFork: boolean;
+	isArchived: boolean;
 };
 
-export type GitHubDataSource = 'live' | 'cache' | 'stale-cache' | 'fallback';
+export type GitHubDataSource = 'github-api' | 'fallback-snapshot';
+
+export type GitHubSyncFailureCode =
+	| 'unavailable'
+	| 'rate-limited'
+	| 'timeout'
+	| 'invalid-response'
+	| 'too-many-pages'
+	| 'invalid-configuration';
 
 export type GitHubRepositoriesResult = {
 	repositories: GitHubRepository[];
 	source: GitHubDataSource;
-	fetchedAt: string;
-	isStale: boolean;
+	fetchedAt: string | null;
+	failureCode: GitHubSyncFailureCode | null;
 	errorMessage: string | null;
 };

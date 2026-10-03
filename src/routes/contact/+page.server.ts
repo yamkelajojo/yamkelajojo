@@ -21,7 +21,7 @@ export const actions: Actions = {
 
 		const validation = validateContactSubmission(submission);
 
-		if (!validation.valid) {
+		if (!validation.valid || !validation.sanitized) {
 			return fail(400, {
 				success: false,
 				errors: validation.errors,
@@ -29,10 +29,13 @@ export const actions: Actions = {
 			});
 		}
 
+		// This portfolio has no message-delivery or storage service. Preserve the
+		// sanitized draft so the page can clearly report validation without
+		// claiming that anything was sent or recorded.
 		return {
 			success: true,
-			submittedAt: new Date().toISOString(),
-			recipientName: validation.sanitized?.name
+			values: validation.sanitized,
+			recipientName: validation.sanitized.name
 		};
 	}
 };

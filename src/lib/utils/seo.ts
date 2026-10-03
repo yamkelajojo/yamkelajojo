@@ -1,6 +1,6 @@
 import { getProfile } from '$lib/data/profile';
 
-const DEFAULT_BASE_URL = 'https://yamkelajojo.workers.dev';
+export const DEFAULT_SITE_ORIGIN = 'https://yamkelajojo-portfolio.yamkelajojo.workers.dev';
 const DEFAULT_OG_IMAGE = '/images/og-cover.svg';
 
 export type PageSeoInput = {
@@ -12,10 +12,38 @@ export type PageSeoInput = {
 	ogType?: 'website' | 'article' | 'profile';
 };
 
-export function buildCanonicalUrl(path: string, baseUrl = DEFAULT_BASE_URL): string {
-	const cleanBase = baseUrl.replace(/\/+$/, '');
-	const cleanPath = path.startsWith('/') ? path : `/${path}`;
-	return `${cleanBase}${cleanPath}`;
+/**
+ * Return the configured canonical origin, rejecting path-bearing values and
+ * non-HTTPS origins. The request Host header is intentionally never consulted.
+ */
+export function getSiteOrigin(configuredOrigin = DEFAULT_SITE_ORIGIN): string {
+	if (!configuredOrigin?.trim()) return DEFAULT_SITE_ORIGIN;
+
+	try {
+		const parsed = new URL(configuredOrigin.trim());
+		if (
+			parsed.protocol !== 'https:' ||
+			parsed.username ||
+			parsed.password ||
+			parsed.pathname !== '/' ||
+			parsed.search ||
+			parsed.hash
+		) {
+			return DEFAULT_SITE_ORIGIN;
+		}
+		return parsed.origin;
+	} catch {
+		return DEFAULT_SITE_ORIGIN;
+	}
+}
+
+export function buildCanonicalUrl(path: string, baseUrl?: string): string {
+	const origin = getSiteOrigin(baseUrl);
+	const safePath = path.startsWith('/') && !path.startsWith('//') ? path : `/${path.replace(/^\/+/, '')}`;
+	const parsed = new URL(safePath, `${origin}/`);
+
+	if (parsed.origin !== origin) return `${origin}/`;
+	return `${origin}${parsed.pathname}`;
 }
 
 export function buildPageSeo(input: PageSeoInput) {
@@ -35,11 +63,10 @@ export function buildPageSeo(input: PageSeoInput) {
 	};
 }
 
-export function buildPersonJsonLd(baseUrl = DEFAULT_BASE_URL): string {
+export function buildPersonJsonLd(baseUrl?: string): string {
 	const profile = getProfile();
 	const siteUrl = buildCanonicalUrl('/', baseUrl);
-
-	return JSON.stringify({
+	const structuredData = {
 		'@context': 'https://schema.org',
 		'@type': 'Person',
 		name: profile.name,
@@ -71,10 +98,34 @@ export function buildPersonJsonLd(baseUrl = DEFAULT_BASE_URL): string {
 			name: 'CustomConnect'
 		},
 		sameAs: [profile.githubUrl, profile.linkedinUrl]
+	};
+
+	// Prevent a profile string containing a closing script tag from terminating
+	// the JSON-LD script element in the document head.
+	return JSON.stringify(structuredData).replace(/[<>&]/g, (character) => {
+		const escapes: Record<string, string> = {
+			'<': '\\u003c',
+			'>': '\\u003e',
+			'&': '\\u0026'
+		};
+		return escapes[character] ?? character;
 	});
 }
 
-export function buildSitemapXml(baseUrl: string, projectSlugs: string[]): string {
+function escapeXml(value: string): string {
+	return value.replace(/[<>&"']/g, (character) => {
+		const escapes: Record<string, string> = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&apos;'
+		};
+		return escapes[character] ?? character;
+	});
+}
+
+export function buildSitemapXml(baseUrl: string | undefined, projectSlugs: string[]): string {
 	const staticRoutes = [
 		'/',
 		'/work',
@@ -90,7 +141,7 @@ export function buildSitemapXml(baseUrl: string, projectSlugs: string[]): string
 
 	const urls = allRoutes
 		.map((route) => {
-			const loc = buildCanonicalUrl(route, baseUrl);
+			const loc = escapeXml(buildCanonicalUrl(route, baseUrl));
 			const priority = route === '/' ? '1.0' : route.startsWith('/work') ? '0.9' : '0.8';
 			return `  <url>\n    <loc>${loc}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 		})

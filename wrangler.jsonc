@@ -4,9 +4,17 @@
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2026-06-01",
 	"compatibility_flags": ["nodejs_als"],
+	"cache": {
+		"enabled": true
+	},
 	"assets": {
 		"binding": "ASSETS",
-		"directory": ".svelte-kit/cloudflare"
+		"directory": ".svelte-kit/cloudflare",
+		"run_worker_first": false
+	},
+	"vars": {
+		"GITHUB_USERNAME": "yamkelajojo",
+		"SITE_ORIGIN": "https://yamkelajojo-portfolio.yamkelajojo.workers.dev"
 	},
 	"observability": {
 		"enabled": true

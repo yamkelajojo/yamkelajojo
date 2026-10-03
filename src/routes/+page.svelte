@@ -2,6 +2,7 @@
 	import SeoHead from '$lib/components/shared/SeoHead.svelte';
 	import ProjectCard from '$lib/components/projects/ProjectCard.svelte';
 	import RepoCard from '$lib/components/github/RepoCard.svelte';
+	import GitHubDataStatus from '$lib/components/github/GitHubDataStatus.svelte';
 	import ContextBadge from '$lib/components/ui/ContextBadge.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import type { PageData } from './$types';
@@ -20,7 +21,7 @@
 		<div class="grid items-start gap-10 lg:grid-cols-12">
 			<div class="lg:col-span-8">
 				<div class="inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs" style="border-color: var(--border-subtle); background-color: var(--bg-surface); font-family: var(--font-mono); color: var(--text-secondary);">
-					<span class="inline-block h-2 w-2 rounded-full" style="background-color: #1f6f54;"></span>
+					<span class="inline-block h-2 w-2 rounded-full" style="background-color: var(--status-available-dot);"></span>
 					<span>{data.profile.availabilityNote}</span>
 				</div>
 
@@ -46,7 +47,7 @@
 					<a
 						href="/work"
 						class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition-colors"
-						style="background-color: var(--accent-primary); color: #ffffff;"
+						style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 					>
 						<span>Explore Selected Work</span>
 						<Icon name="arrow-right" size={16} />
@@ -117,7 +118,7 @@
 </section>
 
 <!-- 2. Selected Work (Featured Projects) -->
-<section class="border-b py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 			<div>
@@ -126,7 +127,7 @@
 					Curated Engineering Case Studies
 				</h2>
 				<p class="mt-2 max-w-2xl text-sm" style="color: var(--text-secondary);">
-					Each project pairs architectural decisions and domain modelling with live repository metadata retrieved from GitHub.
+					Each project pairs architectural decisions and domain modelling with its public GitHub repository metadata.
 				</p>
 			</div>
 
@@ -149,7 +150,7 @@
 </section>
 
 <!-- 3. Technical Areas & Honest Skill Context -->
-<section class="border-b py-16" style="border-color: var(--border-subtle); background-color: var(--bg-subtle);">
+<section class="border-b py-section-regular" style="border-color: var(--border-subtle); background-color: var(--bg-subtle);">
 	<div class="editorial-container">
 		<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 			<div>
@@ -197,7 +198,7 @@
 </section>
 
 <!-- 4. Experience Snapshot -->
-<section class="border-b py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 			<div>
@@ -252,16 +253,16 @@
 </section>
 
 <!-- 5. GitHub Activity / Repository Pulse -->
-<section class="border-b py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 			<div>
-				<p class="section-kicker">04 / Live GitHub Integration</p>
+				<p class="section-kicker">04 / Repository Data &amp; Cache Policy</p>
 				<h2 class="mt-1 text-2xl font-bold tracking-tight sm:text-3xl" style="color: var(--text-primary);">
 					Public Repositories ({data.githubMeta.totalRepos})
 				</h2>
 				<p class="mt-2 max-w-2xl text-sm" style="color: var(--text-secondary);">
-					Automatically retrieved and normalized from <code>github.com/yamkelajojo</code> via our server-side adapter and cache boundary.
+					Normalized public metadata comes from GitHub when a Worker cache miss or revalidation runs. Fresh Workers Caching hits skip Worker execution but still count as Worker requests; revalidation depends on later traffic, not a scheduled sync.
 				</p>
 			</div>
 
@@ -275,6 +276,10 @@
 			</a>
 		</div>
 
+		<div class="mt-5">
+			<GitHubDataStatus status={data.githubMeta} totalRepositories={data.githubMeta.totalRepos} />
+		</div>
+
 		<div class="mt-8 grid gap-5 md:grid-cols-2">
 			{#each data.recentRepos as repo (repo.name)}
 				<RepoCard {repo} />
@@ -284,7 +289,7 @@
 </section>
 
 <!-- 6. Call to Action -->
-<section class="py-16">
+<section class="py-section-regular">
 	<div class="editorial-container">
 		<div class="editorial-card flex flex-col items-start justify-between gap-6 p-8 md:flex-row md:items-center">
 			<div>
@@ -301,7 +306,7 @@
 				<a
 					href="/contact"
 					class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold"
-					style="background-color: var(--accent-primary); color: #ffffff;"
+					style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 				>
 					<span>Contact Yamkela</span>
 					<Icon name="arrow-right" size={16} />

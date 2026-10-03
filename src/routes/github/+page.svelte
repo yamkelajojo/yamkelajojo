@@ -1,9 +1,9 @@
 <script lang="ts">
 	import SeoHead from '$lib/components/shared/SeoHead.svelte';
 	import RepoCard from '$lib/components/github/RepoCard.svelte';
+	import GitHubDataStatus from '$lib/components/github/GitHubDataStatus.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import { filterAndSortRepositories } from '$lib/github/normalizer';
-	import { formatIsoDate } from '$lib/utils/format';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -22,36 +22,24 @@
 		})
 	);
 
-	const sourceBadge = $derived.by(() => {
-		switch (data.githubResult.source) {
-			case 'live':
-				return { label: 'Live GitHub API', className: 'badge-pro' };
-			case 'cache':
-				return { label: 'Edge / TTL Cache (Fresh)', className: 'badge-handson' };
-			case 'stale-cache':
-				return { label: 'Stale Cache Fallback', className: 'badge-training' };
-			case 'fallback':
-				return { label: 'Verified Snapshot Fallback', className: 'badge-training' };
-		}
-	});
 </script>
 
 <SeoHead
 	title="GitHub Repositories"
-	description="Live public GitHub repositories and open engineering work from github.com/yamkelajojo, normalized and cached at the edge."
+	description="Public GitHub repositories and open engineering work from github.com/yamkelajojo, normalized on Worker misses and served with Cloudflare Workers Caching response policies."
 	path="/github"
 />
 
-<section class="border-b py-12 sm:py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-compact sm:py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<div class="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
 			<div>
-				<p class="section-kicker">Dynamic Repository Telemetry</p>
+				<p class="section-kicker">Public Repository Index</p>
 				<h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text-primary);">
 					GitHub — @{data.profile.githubUsername}
 				</h1>
 				<p class="mt-3 max-w-2xl text-base leading-relaxed" style="color: var(--text-secondary);">
-					Public repositories are retrieved from the GitHub REST API, validated through a strict TypeScript normalizer, and cached to prevent redundant per-visitor requests.
+					Public repositories are read from GitHub on Worker cache misses or revalidations, then normalized before display. A fresh Workers Caching hit skips Worker code but still counts as a Worker request; the response freshness policy is shown below.
 				</p>
 			</div>
 
@@ -61,7 +49,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold"
-					style="background-color: var(--accent-primary); color: #ffffff;"
+					style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 				>
 					<Icon name="github" size={16} />
 					<span>Open github.com/{data.profile.githubUsername}</span>
@@ -70,43 +58,17 @@
 			</div>
 		</div>
 
-		<!-- Adapter & Cache Status Bar -->
-		<div
-			class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 text-xs"
-			style="border-color: var(--border-subtle); background-color: var(--bg-surface); font-family: var(--font-mono);"
-		>
-			<div class="flex flex-wrap items-center gap-3">
-				<span class="rounded px-2 py-0.5 font-semibold {sourceBadge.className}">
-					{sourceBadge.label}
-				</span>
-				<span style="color: var(--text-secondary);">
-					{data.githubResult.repositories.length} public repositories indexed
-				</span>
-				<span style="color: var(--text-muted);">
-					· Last checked {formatIsoDate(data.githubResult.fetchedAt)}
-				</span>
-			</div>
-
-			<span style="color: var(--text-muted);">
-				Pipeline: GitHub API → Adapter → Normalizer → TTL Cache → UI
-			</span>
+		<div class="mt-6">
+			<GitHubDataStatus
+				status={data.githubResult}
+				totalRepositories={data.githubResult.repositories.length}
+			/>
 		</div>
-
-		{#if data.githubResult.isStale && data.githubResult.errorMessage}
-			<div
-				role="status"
-				class="mt-4 flex items-center gap-2.5 rounded-md border px-4 py-3 text-xs"
-				style="border-color: var(--status-training-border); background-color: var(--status-training-bg); color: var(--status-training-text);"
-			>
-				<Icon name="alert" size={15} />
-				<span>{data.githubResult.errorMessage}</span>
-			</div>
-		{/if}
 	</div>
 </section>
 
 <!-- Filter Controls & Repository Grid -->
-<section class="py-12">
+<section class="py-section-compact">
 	<div class="editorial-container">
 		<h2 class="sr-only">Repository Directory and Filter Controls</h2>
 		<div class="editorial-card p-5">

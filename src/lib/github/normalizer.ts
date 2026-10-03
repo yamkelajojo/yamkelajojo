@@ -15,10 +15,30 @@ function toNonNegativeInt(value: unknown): number {
 function isSafeHttpUrl(value: string): boolean {
 	try {
 		const parsed = new URL(value);
-		return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+		return (
+			(parsed.protocol === 'https:' || parsed.protocol === 'http:') &&
+			parsed.username.length === 0 &&
+			parsed.password.length === 0
+		);
 	} catch {
 		return false;
 	}
+}
+
+function activityTimestamp(repo: GitHubRepository): number {
+	for (const value of [repo.pushedAt, repo.updatedAt, repo.createdAt]) {
+		if (!value) continue;
+		const timestamp = Date.parse(value);
+		if (Number.isFinite(timestamp)) return timestamp;
+	}
+	return 0;
+}
+
+export function sortGitHubRepositories(repositories: GitHubRepository[]): GitHubRepository[] {
+	return [...repositories].sort((a, b) => {
+		const activityDifference = activityTimestamp(b) - activityTimestamp(a);
+		return activityDifference || a.name.localeCompare(b.name);
+	});
 }
 
 export function normalizeGitHubRepo(raw: unknown): GitHubRepository | null {
@@ -27,8 +47,15 @@ export function normalizeGitHubRepo(raw: unknown): GitHubRepository | null {
 	}
 
 	const record = raw as Record<string, unknown>;
+	const visibility = toCleanNullableString(record.visibility);
+	const normalizedVisibility = visibility?.toLowerCase() ?? null;
+	const privateFlag = record.private;
+	const hasMalformedPrivateFlag = privateFlag !== undefined && typeof privateFlag !== 'boolean';
+	const isKnownNonPublic =
+		privateFlag === true || (normalizedVisibility !== null && normalizedVisibility !== 'public');
+	const isKnownPublic = privateFlag === false || normalizedVisibility === 'public';
 
-	if (record.private === true) {
+	if (hasMalformedPrivateFlag || isKnownNonPublic || !isKnownPublic) {
 		return null;
 	}
 
@@ -50,20 +77,14 @@ export function normalizeGitHubRepo(raw: unknown): GitHubRepository | null {
 	const forks = toNonNegativeInt(record.forks_count ?? record.forks);
 
 	const rawTopics = Array.isArray(record.topics) ? record.topics : [];
-	const topics = rawTopics
-		.filter((item): item is string => typeof item === 'string')
-		.map((item) => item.trim())
-		.filter((item) => item.length > 0);
-
-	const createdAt =
-		toCleanNullableString(record.created_at ?? record.createdAt) ?? new Date(0).toISOString();
-	const updatedAt =
-		toCleanNullableString(record.updated_at ?? record.updatedAt) ?? createdAt;
-	const pushedAt = toCleanNullableString(record.pushed_at ?? record.pushedAt);
-	const defaultBranch =
-		toCleanNullableString(record.default_branch ?? record.defaultBranch) ?? 'main';
-	const visibility =
-		toCleanNullableString(record.visibility) ?? 'public';
+	const topics = Array.from(
+		new Set(
+			rawTopics
+				.filter((item): item is string => typeof item === 'string')
+				.map((item) => item.trim())
+				.filter((item) => item.length > 0)
+		)
+	);
 
 	return {
 		name,
@@ -75,13 +96,13 @@ export function normalizeGitHubRepo(raw: unknown): GitHubRepository | null {
 		stars,
 		forks,
 		topics,
-		createdAt,
-		updatedAt,
-		pushedAt,
-		defaultBranch,
-		visibility,
-		isFork: Boolean(record.fork ?? record.isFork),
-		isArchived: Boolean(record.archived ?? record.isArchived)
+		createdAt: toCleanNullableString(record.created_at ?? record.createdAt),
+		updatedAt: toCleanNullableString(record.updated_at ?? record.updatedAt),
+		pushedAt: toCleanNullableString(record.pushed_at ?? record.pushedAt),
+		defaultBranch: toCleanNullableString(record.default_branch ?? record.defaultBranch),
+		visibility: toCleanNullableString(record.visibility),
+		isFork: record.fork === true || record.isFork === true,
+		isArchived: record.archived === true || record.isArchived === true
 	};
 }
 
@@ -98,11 +119,7 @@ export function normalizeGitHubRepos(rawList: unknown): GitHubRepository[] {
 		}
 	}
 
-	return normalized.sort((a, b) => {
-		const dateA = Date.parse(a.pushedAt ?? a.updatedAt) || 0;
-		const dateB = Date.parse(b.pushedAt ?? b.updatedAt) || 0;
-		return dateB - dateA;
-	});
+	return sortGitHubRepositories(normalized);
 }
 
 export type RepositoryFilterOptions = {
@@ -139,23 +156,16 @@ export function filterAndSortRepositories(
 			return false;
 		}
 		if (query.length > 0) {
-			const inName = repo.name.toLowerCase().includes(query);
-			const inDesc = repo.description?.toLowerCase().includes(query) ?? false;
-			const inLang = repo.language?.toLowerCase().includes(query) ?? false;
-			const inTopics = repo.topics.some((topic) => topic.toLowerCase().includes(query));
-			return inName || inDesc || inLang || inTopics;
+			const searchableText = [repo.name, repo.fullName, repo.description, repo.language, ...repo.topics]
+				.filter((value): value is string => typeof value === 'string')
+				.join(' ')
+				.toLowerCase();
+			return searchableText.includes(query);
 		}
 		return true;
 	});
 
-	return filtered.sort((a, b) => {
-		if (sortBy === 'stars') {
-			if (b.stars !== a.stars) return b.stars - a.stars;
-		} else if (sortBy === 'name') {
-			return a.name.localeCompare(b.name);
-		}
-		const dateA = Date.parse(a.pushedAt ?? a.updatedAt) || 0;
-		const dateB = Date.parse(b.pushedAt ?? b.updatedAt) || 0;
-		return dateB - dateA;
-	});
+	if (sortBy === 'name') return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+	const byActivity = sortGitHubRepositories(filtered);
+	return sortBy === 'stars' ? byActivity.sort((a, b) => b.stars - a.stars) : byActivity;
 }

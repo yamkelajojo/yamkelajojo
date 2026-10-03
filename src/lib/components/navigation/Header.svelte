@@ -64,6 +64,9 @@
 		root.classList.remove('theme-light', 'theme-dark');
 		root.classList.add(nextDark ? 'theme-dark' : 'theme-light');
 		root.setAttribute('data-theme', nextDark ? 'dark' : 'light');
+		const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+		const canvasColor = getComputedStyle(root).getPropertyValue('--bg-canvas').trim();
+		if (themeColor && canvasColor) themeColor.content = canvasColor;
 		isDark = nextDark;
 		try {
 			localStorage.setItem('yj-theme', nextDark ? 'dark' : 'light');
@@ -231,7 +234,7 @@
 				href="/resume/yamkela-jojo-cv.pdf"
 				download="Yamkela-Jojo-CV.pdf"
 				class="hidden items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors sm:inline-flex"
-				style="border-color: var(--accent-primary); background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);"
+				style="border-color: var(--accent-primary); background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);"
 			>
 				<Icon name="download" size={14} />
 				<span>Download CV</span>
@@ -325,7 +328,7 @@
 									href="/resume/yamkela-jojo-cv.pdf"
 									download="Yamkela-Jojo-CV.pdf"
 									class="flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold"
-									style="background-color: var(--accent-primary); color: #ffffff;"
+									style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 								>
 									<Icon name="download" size={16} />
 									<span>Download CV (PDF)</span>

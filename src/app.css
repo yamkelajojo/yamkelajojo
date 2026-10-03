@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+@theme inline {
+	--spacing-section-compact: var(--space-section-compact);
+	--spacing-section-regular: var(--space-section-regular);
+	--spacing-section-generous: var(--space-section-generous);
+	--color-on-accent: var(--text-on-accent);
+}
+
 /* ==========================================================================
    1. Josh W. Comeau's Modern CSS Reset (Current June 2026 Reference)
    Source: https://www.joshwcomeau.com/css/custom-css-reset/
@@ -86,6 +93,17 @@ h6 {
    2. Editorial Design System Tokens (Warm Archival Light & Obsidian Dark)
    ========================================================================== */
 
+:root {
+	--layout-content-width: 76rem;
+	--layout-content-gutter: clamp(1rem, 4vw, 2.5rem);
+	--space-section-compact: 3rem;
+	--space-section-regular: 4rem;
+	--space-section-generous: 5rem;
+	--radius-editorial-card: 0.5rem;
+	--font-size-kicker: 0.75rem;
+	--font-size-metadata: 0.6875rem;
+}
+
 :root,
 html.theme-light {
 	--bg-canvas: #f7f4ee;
@@ -101,6 +119,20 @@ html.theme-light {
 	--accent-primary-hover: #893014;
 	--accent-soft: #f6e4dd;
 	--focus-ring: #a83e1d;
+	--text-on-accent: #ffffff;
+	--status-available-dot: #1f6f54;
+
+	/* Language indicators are semantic tokens, not per-component color literals. */
+	--language-typescript: #2b6cb0;
+	--language-javascript: #8a5a00;
+	--language-php: #5a509b;
+	--language-blade: #a43d20;
+	--language-vue: #1f6f54;
+	--language-python: #2c5282;
+	--language-jupyter: #a13e20;
+	--language-java: #9c4221;
+	--language-dart: #08768b;
+	--language-default: #625e57;
 
 	/* Context & Status Tokens */
 	--status-pro-bg: #dff0e8;
@@ -114,6 +146,10 @@ html.theme-light {
 	--status-training-bg: #f6ead4;
 	--status-training-text: #654108;
 	--status-training-border: #dfc392;
+
+	--status-archived-bg: #ece9e2;
+	--status-archived-text: #4a473f;
+	--status-archived-border: #c7c0b3;
 
 	--status-exploring-bg: #ece7f6;
 	--status-exploring-text: #452d6d;
@@ -140,6 +176,19 @@ html.theme-dark {
 	--accent-primary-hover: #f29273;
 	--accent-soft: #2e1b15;
 	--focus-ring: #e87a56;
+	--text-on-accent: #21140f;
+	--status-available-dot: #7be0b9;
+
+	--language-typescript: #8ab4f8;
+	--language-javascript: #f2c14e;
+	--language-php: #c3bafa;
+	--language-blade: #ff9878;
+	--language-vue: #7be0b9;
+	--language-python: #8ab4f8;
+	--language-jupyter: #ff9878;
+	--language-java: #ff9c7e;
+	--language-dart: #72d5e8;
+	--language-default: #c7c2b9;
 
 	--status-pro-bg: #132c23;
 	--status-pro-text: #7be0b9;
@@ -152,6 +201,10 @@ html.theme-dark {
 	--status-training-bg: #2e2310;
 	--status-training-text: #f4c873;
 	--status-training-border: #59431d;
+
+	--status-archived-bg: #262b28;
+	--status-archived-text: #d3d0c7;
+	--status-archived-border: #454c47;
 
 	--status-exploring-bg: #251d35;
 	--status-exploring-text: #ccb6f5;
@@ -169,7 +222,6 @@ body {
 	color: var(--text-primary);
 	font-family: var(--font-sans);
 	min-height: 100dvh;
-	overflow-x: hidden;
 	transition:
 		background-color 180ms ease,
 		color 180ms ease;
@@ -205,24 +257,30 @@ body {
 /* Editorial container and hairline grid helpers */
 .editorial-container {
 	width: 100%;
-	max-width: 76rem;
+	max-width: var(--layout-content-width);
 	margin-inline: auto;
-	padding-inline: clamp(1rem, 4vw, 2.5rem);
+	padding-inline: var(--layout-content-gutter);
 }
 
 .section-kicker {
 	font-family: var(--font-mono);
-	font-size: 0.75rem;
+	font-size: var(--font-size-kicker);
 	font-weight: 600;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--accent-primary);
 }
 
+.metadata-text {
+	font-family: var(--font-mono);
+	font-size: var(--font-size-metadata);
+	color: var(--text-muted);
+}
+
 .editorial-card {
 	background-color: var(--bg-surface);
 	border: 1px solid var(--border-subtle);
-	border-radius: 0.5rem;
+	border-radius: var(--radius-editorial-card);
 	transition:
 		border-color 160ms ease,
 		transform 160ms ease,
@@ -250,6 +308,12 @@ body {
 	background-color: var(--status-training-bg);
 	color: var(--status-training-text);
 	border: 1px solid var(--status-training-border);
+}
+
+.badge-archived {
+	background-color: var(--status-archived-bg);
+	color: var(--status-archived-text);
+	border: 1px solid var(--status-archived-border);
 }
 
 .badge-exploring,

@@ -31,17 +31,19 @@ Following Matt Pocock's `to-issues` / `to-tickets` tracer-bullet methodology, th
 
 ---
 
-## SLICE-03: GitHub Adapter, Normalizer, Cache & Resilient API
+## SLICE-03: GitHub API, Normalizer, Workers Caching & Resilient Fallback
 
 - **Requirements**: `GITHUB-001`, `GITHUB-002`, `GITHUB-003`, `GITHUB-004`, `COST-001`, `COST-002`, `COST-003`
 - **Blocked by**: `SLICE-01`
 - **What to build**:
-  End-to-end GitHub integration pipeline (`GitHub API → adapter → normalizer → TTL/SWR cache → fallback snapshot → SvelteKit server load & /api/github → UI`) that retrieves `github.com/yamkelajojo` public repositories, normalizes every field, caches responses to avoid per-visitor API calls, and degrades gracefully when GitHub is slow, rate-limited, or unreachable.
+  A bounded GitHub REST client and normalized repository model consumed by `/`, `/work`, `/github`, and `/api/github`; a maintained snapshot for cold Worker-cache failures; and Cloudflare Workers Caching configured through Wrangler and response headers. Workers Caching is outside the service—there is no process-local TTL cache or scheduled synchronization.
 - **Acceptance Criteria**:
-  - [x] Raw GitHub payloads normalize to `GitHubRepository` (`name`, `fullName`, `description`, `htmlUrl`, `homepage`, `language`, `stars`, `forks`, `topics`, `createdAt`, `updatedAt`, `pushedAt`).
-  - [x] Missing fields (`description: null`, `language: null`, `homepage: ""`, missing `topics`), boundary counts (`0`, `1`, `many`), and malformed payloads are handled safely without throwing.
-  - [x] Cache prevents redundant upstream requests within TTL and serves stale or curated snapshot data with explicit status metadata (`live` | `cached` | `stale` | `fallback`) on upstream failure.
-  - [x] White-box unit and integration tests cover all branches and boundary cases in `SPECS_PRD.md` Section 48.
+  - [x] Raw GitHub payloads normalize into the public `GitHubRepository` model and safely handle missing optional fields, empty lists, malformed responses, unsafe URLs, and negative counts.
+  - [x] Pagination follows validated same-origin GitHub `Link` headers, includes repositories beyond page 100, and stops at the configured page bound; forks and archived public repositories remain distinguishable, while private records are omitted.
+  - [x] A live payload and a maintained fallback are distinguished by `github-api` versus `fallback-snapshot`; these source values do not claim Cloudflare cache HIT/STALE state.
+  - [x] Successful route responses carry the 30-minute freshness / 30-minute stale-while-revalidate / 24-hour stale-if-error policy; fallback responses carry a five-minute freshness window and an explicit failure status.
+  - [x] Public query-based `?refresh=1` is removed by a no-store canonical redirect, so a visitor cannot force unrestricted GitHub synchronization.
+  - [x] Unit, integration, and built-Worker browser tests exercise the direct API, response metadata, snapshot UI, and query policy. Deployed cache HIT behavior requires a separate `Cf-Cache-Status` observation.
 
 ---
 

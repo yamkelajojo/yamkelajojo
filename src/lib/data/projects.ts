@@ -24,9 +24,9 @@ export type EnrichedFeaturedProject = FeaturedProject & {
 const FEATURED_PROJECTS: FeaturedProject[] = [
 	{
 		slug: 'engineering-portfolio',
-		title: 'Personal Developer Portfolio & GitHub Telemetry Platform',
+		title: 'Personal Developer Portfolio & Repository Data Platform',
 		subtitle:
-			'SvelteKit 2 + Svelte 5 + TypeScript + Bits UI application deployed on Cloudflare Workers with resilient GitHub API normalization and V-Model TDD verification.',
+			'SvelteKit 2 + Svelte 5 + TypeScript + Bits UI application deployed on Cloudflare Workers with resilient GitHub API normalization and test-driven verification.',
 		categories: ['Full Stack', 'Web', 'DevOps / Cloud', 'UI / UX'],
 		context: 'personal',
 		contextLabel: 'Personal Engineering Project',
@@ -34,11 +34,11 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 		featuredOrder: 1,
 		repoName: 'yamkelajojo',
 		overview:
-			'Designed and engineered as a live demonstration of how I build software: a fast, accessible, test-driven web application that combines structured CV domain modelling with real-time GitHub repository discovery and Cloudflare Workers edge delivery.',
+			'Designed and engineered as a practical demonstration of how I build software: a fast, accessible, test-driven web application that combines structured CV domain modelling with traffic-driven public GitHub repository discovery under response caching and Cloudflare Workers delivery.',
 		problem:
 			'Most developer portfolios either behave like static online CVs that quickly drift out of date as GitHub repositories evolve, or rely on fragile client-side fetches and heavy UI templates that obscure the engineer’s actual craft.',
 		approach:
-			'Built a typed domain architecture in SvelteKit and Svelte 5 that strictly separates curated engineering case studies from dynamically normalized GitHub repository metadata, protected by a multi-tier TTL + stale-while-revalidate cache and verified through white-box, integration, and browser E2E tests.',
+			'Built a typed domain architecture in SvelteKit and Svelte 5 that separates curated engineering case studies from normalized GitHub repository metadata. Cloudflare Workers Caching reuses cacheable route responses, while a bounded server-side API client and maintained snapshot handle GitHub failure states.',
 		role: 'Primary Software & Full-Stack Engineer (Architecture, Design System, TDD & Deployment)',
 		technologies: [
 			'SvelteKit',
@@ -54,15 +54,21 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 		],
 		architecture: [
 			'Content Domain Seam (src/lib/data/): Typed, normalized records for Profile, Experience, Education, Skills, Certifications, and Featured Case Studies.',
-			'GitHub Adapter & Normalizer (src/lib/github/): Validates raw GitHub REST payloads into a strict GitHubRepository domain model before any UI component consumes them.',
-			'Resilient Multi-Tier Cache: Serves fresh responses from memory/edge cache (15m TTL), falls back to stale cache (24h window) or a verified repository snapshot if GitHub rate-limits or fails.',
-			'Cloudflare Workers Static Assets: Serves static assets directly at the edge while keeping dynamic Worker invocations minimal to preserve R0/month hosting discipline.'
+			'GitHub API Client & Normalizer (src/lib/github/): Bounds request time and pagination, filters private repositories, validates optional fields, and maps trusted data into a strict GitHubRepository model.',
+			'Cloudflare Workers Caching: Successful GitHub-backed SSR and API responses use a 30-minute freshness window, a 30-minute stale-while-revalidate window, and stale-if-error for up to 24 hours. Cache hits still count as Worker requests but avoid running Worker code; misses and revalidations can call GitHub.',
+			'Maintained Snapshot Fallback: When GitHub fails on a cold Worker-cache miss, routes return a clearly identified, manually maintained snapshot with a five-minute freshness window; case-study routes do not fetch GitHub.',
+			'Cloudflare Static Assets: Existing static assets are served before Worker code; hashed SvelteKit assets use the adapter’s immutable cache headers.'
 		],
 		keyDecisions: [
 			{
 				title: 'Decouple UI from raw GitHub API schema',
 				rationale:
-					'By normalizing fields (nullable descriptions, empty homepage strings, topic arrays, and non-negative counts) at the adapter boundary, UI components remain simple and immune to upstream schema quirks.'
+					'By normalizing fields (nullable descriptions, empty homepage strings, topic arrays, and non-negative counts) at the API boundary, UI components remain simple and resilient to upstream schema quirks.'
+			},
+			{
+				title: 'Use Cloudflare Workers Caching instead of a second application cache',
+				rationale:
+					'Wrangler enables Cloudflare Workers Caching before Worker invocation; standard Cache-Control directives define response freshness and stale behavior. This avoids a KV binding, scheduled job, and application-managed Cache API dataset. The generated adapter also contains an internal caches.default wrapper after Worker invocation; it does not skip Worker CPU and is not relied on for workers.dev correctness.'
 			},
 			{
 				title: 'Apply Josh W. Comeau’s 2026 Modern CSS Reset + Bits UI headless primitives',
@@ -76,33 +82,33 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 			}
 		],
 		challenges: [
-			'Preventing per-visitor GitHub API requests from exhausting unauthenticated rate limits (60 req/hr) while ensuring repository updates propagate automatically.',
-			'Designing a responsive editorial layout that communicates software engineering depth across mobile (390px) and desktop viewports without visual clutter.'
+			'Balancing GitHub rate limits with update propagation: fresh Workers Caching hits avoid Worker execution, but misses and revalidation can still call GitHub.',
+			'Designing a responsive editorial layout that communicates software engineering depth across mobile, tablet, and desktop viewports without visual clutter.'
 		],
 		testing: [
-			'White-box unit tests (Vitest) covering every branch and boundary condition in the GitHub normalizer, TTL/SWR cache, and CV domain selectors.',
-			'Integration and automated WCAG 2.1 AA accessibility tests (axe-core + Testing Library) verifying Bits UI dialogs, tabs, and server endpoints.',
-			'End-to-end Playwright user journey tests across desktop and mobile viewports.'
+			'Vitest checks GitHub pagination beyond 100 repositories, malformed and empty payloads, optional fields, private/fork/archived repositories, timeouts, rate limits, and explicit Workers Caching response policy.',
+			'Integration tests verify server-load metadata, the 503 cold-miss fallback, no per-case-study GitHub fetch, configured-origin SEO, and query canonicalization.',
+			'Playwright runs the built Cloudflare Worker with a controlled GitHub API stub, then checks real browser journeys, accessibility, response headers, fallback behavior, and responsive layouts. A deployed Cf-Cache-Status observation is still required to verify production edge-cache HIT behavior.'
 		],
 		screenshots: [
 			{
-				title: 'GitHub Normalization & Cache Pipeline',
-				caption: 'Resilient data flow from GitHub REST API through adapter, normalizer, and multi-tier cache to Svelte 5 UI.',
+				title: 'Workers Caching & GitHub Response Flow',
+				caption: 'Fresh cache hits return before Worker execution. Cold misses and revalidations call GitHub; success responses are cacheable, while cold failures return the maintained snapshot. Cf-Cache-Status is needed to observe actual edge behavior.',
 				diagramType: 'pipeline',
 				imageUrl: '/images/projects/portfolio-architecture.svg',
 				nodes: [
 					'Visitor Request',
-					'SvelteKit Server Load',
-					'TTL Cache Lookup (15m)',
-					'GitHub REST API Adapter',
-					'Schema Normalizer',
-					'Stale / Snapshot Fallback'
+					'Cloudflare Workers Caching',
+					'SvelteKit Worker (miss / revalidation)',
+					'GitHub REST API',
+					'Normalizer + Snapshot Fallback',
+					'SSR / JSON Response → Cache'
 				]
 			}
 		],
 		results: [
-			'Delivers an automatically synchronized portfolio within Cloudflare’s R0/month free tier.',
-			'Full traceability from PRD requirement IDs (PROFILE-001 through DEPLOY-001) to automated test suites.'
+			'Requires no paid infrastructure and is designed to remain within Cloudflare’s Free-plan quotas; request charges still apply, including cached Worker responses.',
+			'Full traceability from portfolio requirements to Vitest, Worker-backed integration tests, and browser E2E journeys.'
 		],
 		links: {
 			github: 'https://github.com/yamkelajojo/yamkelajojo',
@@ -350,15 +356,15 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 const LAB_EXPERIMENTS: LabExperiment[] = [
 	{
 		id: 'github-normalizer-pipeline',
-		title: 'GitHub API Schema Normalizer & Cache Resilience Inspector',
+		title: 'GitHub API Normalization & Workers Caching Explorer',
 		domain: 'Software Engineering',
 		context: 'hands-on',
 		summary:
-			'Interactive inspection of how untrusted external REST payloads are validated, normalized into strict TypeScript domain objects, and served through a stale-while-revalidate cache boundary.',
+			'Inspection of how public REST payloads are validated into strict TypeScript domain objects, then served with Cloudflare Workers Caching and a maintained snapshot for cold-miss failures.',
 		technicalNotes: [
-			'Sanitizes URLs to allow only http/https protocols and coerces negative/NaN counts to 0.',
+			'Validates repository URLs, optional dates, nullable fields, and non-negative counts before rendering.',
 			'Decouples Svelte 5 components from GitHub REST API snake_case fields.',
-			'Supports graceful degradation across live, fresh-cache, stale-cache, and static-snapshot states.'
+			'Distinguishes the GitHub payload source and fetch timestamp from Cloudflare HIT/MISS state; the page does not label a response as an edge hit.'
 		],
 		technologies: ['TypeScript', 'SvelteKit', 'Vitest', 'Cloudflare Workers'],
 		relatedRepo: 'yamkelajojo'

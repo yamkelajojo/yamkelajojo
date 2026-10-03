@@ -69,8 +69,32 @@ describe('GITHUB-001 & GITHUB-004 — GitHub normalizer branch and boundary cove
 		expect(repo?.homepage).toBeNull();
 		expect(repo?.topics).toEqual([]);
 		expect(repo?.pushedAt).toBeNull();
-		expect(repo?.defaultBranch).toBe('main');
-		expect(repo?.visibility).toBe('public');
+		expect(repo?.createdAt).toBe('2026-04-10T09:39:24Z');
+		expect(repo?.updatedAt).toBe('2026-05-05T18:28:58Z');
+		expect(repo?.defaultBranch).toBeNull();
+		expect(repo?.visibility).toBeNull();
+	});
+
+	it('preserves genuinely absent optional timestamps and branch metadata as null', () => {
+		const repo = normalizeGitHubRepo({
+			...baseRawRepo,
+			created_at: undefined,
+			updated_at: undefined,
+			pushed_at: undefined,
+			default_branch: undefined,
+			visibility: undefined,
+			fork: 'true',
+			archived: 1
+		});
+
+		expect(repo).not.toBeNull();
+		expect(repo?.createdAt).toBeNull();
+		expect(repo?.updatedAt).toBeNull();
+		expect(repo?.pushedAt).toBeNull();
+		expect(repo?.defaultBranch).toBeNull();
+		expect(repo?.visibility).toBeNull();
+		expect(repo?.isFork).toBe(false);
+		expect(repo?.isArchived).toBe(false);
 	});
 
 	it('handles boundary cases for stars (0, 1, large values) and topics (0, 1, many)', () => {
@@ -120,6 +144,21 @@ describe('GITHUB-001 & GITHUB-004 — GitHub normalizer branch and boundary cove
 		expect(normalizeGitHubRepo({ ...baseRawRepo, html_url: 'javascript:alert(1)' })).toBeNull();
 		expect(normalizeGitHubRepo({ ...baseRawRepo, html_url: ':::invalid-url:::' })).toBeNull();
 		expect(normalizeGitHubRepo({ ...baseRawRepo, private: true })).toBeNull();
+		expect(
+			normalizeGitHubRepo({ ...baseRawRepo, private: false, visibility: 'PRIVATE' })
+		).toBeNull();
+		expect(
+			normalizeGitHubRepo({ ...baseRawRepo, private: false, visibility: 'INTERNAL' })
+		).toBeNull();
+		expect(
+			normalizeGitHubRepo({ ...baseRawRepo, private: 'false', visibility: 'public' })
+		).toBeNull();
+		expect(
+			normalizeGitHubRepo({ ...baseRawRepo, private: undefined, visibility: undefined })
+		).toBeNull();
+		expect(
+			normalizeGitHubRepo({ ...baseRawRepo, private: undefined, visibility: 'public' })
+		).not.toBeNull();
 	});
 
 	it('handles boundary cases for repository arrays (0, 1, many) and sorts by latest activity', () => {

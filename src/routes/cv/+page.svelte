@@ -37,7 +37,7 @@
 				href={profile.resumeUrl}
 				download="Yamkela-Jojo-CV.pdf"
 				class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold"
-				style="background-color: var(--accent-primary); color: #ffffff;"
+				style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 			>
 				<Icon name="download" size={16} />
 				<span>Download CV (PDF)</span>

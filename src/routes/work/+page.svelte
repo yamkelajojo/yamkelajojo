@@ -3,6 +3,7 @@
 	import SeoHead from '$lib/components/shared/SeoHead.svelte';
 	import ProjectCard from '$lib/components/projects/ProjectCard.svelte';
 	import RepoCard from '$lib/components/github/RepoCard.svelte';
+	import GitHubDataStatus from '$lib/components/github/GitHubDataStatus.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import type { PageData } from './$types';
 
@@ -21,19 +22,23 @@
 
 <SeoHead
 	title="Work & Case Studies"
-	description="Curated software, full-stack web, mobile, and data science case studies by Yamkela Jojo alongside dynamically discovered GitHub repositories."
+	description="Curated software, full-stack web, mobile, and data science case studies by Yamkela Jojo alongside public GitHub repositories served under Cloudflare Workers Caching response policies."
 	path="/work"
 />
 
-<section class="border-b py-12 sm:py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-compact sm:py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<p class="section-kicker">Selected Work &amp; Architecture</p>
 		<h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text-primary);">
 			Engineering Case Studies &amp; Repository Index
 		</h1>
 		<p class="mt-3 max-w-3xl text-base leading-relaxed" style="color: var(--text-secondary);">
-			The portfolio separates manually curated engineering case studies—detailing problem framing, architecture, trade-offs, and testing—from automatically discovered public GitHub repositories.
+			The portfolio separates manually curated engineering case studies—detailing problem framing, architecture, trade-offs, and testing—from public GitHub repository data.
 		</p>
+
+		<div class="mt-5">
+			<GitHubDataStatus status={data.githubMeta} totalRepositories={data.repositories.length} />
+		</div>
 
 		<!-- Internal Commercial Work Callout (CustomConnect) -->
 		<div
@@ -80,7 +85,7 @@
 						value={category}
 						class="rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
 						style={selectedCategory === category
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						{category}
@@ -125,7 +130,7 @@
 					All Public GitHub Repositories ({data.repositories.length})
 				</h2>
 				<p class="mt-1 text-sm" style="color: var(--text-secondary);">
-					Normalized live metadata from <code>github.com/yamkelajojo</code>.
+					Normalized public metadata from <code>github.com/yamkelajojo</code>.
 				</p>
 			</div>
 

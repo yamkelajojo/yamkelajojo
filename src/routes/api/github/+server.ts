@@ -1,21 +1,11 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { fetchUserRepositories } from '$lib/github/service';
-import { env } from '$env/dynamic/private';
+import { getGitHubResponseMetadata } from '$lib/github/cache-policy';
+import { loadGitHubRepositories } from '$lib/github/server';
 
-export const GET: RequestHandler = async ({ url, fetch }) => {
-	const forceRefresh = url.searchParams.get('refresh') === '1';
+export const GET: RequestHandler = async ({ fetch }) => {
+	const result = await loadGitHubRepositories(fetch);
+	const { status, headers } = getGitHubResponseMetadata(result);
 
-	const result = await fetchUserRepositories({
-		username: env.GITHUB_USERNAME || 'yamkelajojo',
-		token: env.GITHUB_TOKEN,
-		fetchImpl: fetch,
-		forceRefresh
-	});
-
-	return json(result, {
-		headers: {
-			'Cache-Control': 'public, max-age=300, s-maxage=900, stale-while-revalidate=3600'
-		}
-	});
+	return json(result, { status, headers });
 };

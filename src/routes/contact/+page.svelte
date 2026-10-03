@@ -8,11 +8,11 @@
 
 <SeoHead
 	title="Contact & Professional Links"
-	description="Connect with Yamkela Jojo via LinkedIn, GitHub, downloadable CV, or direct message."
+	description="Connect with Yamkela Jojo through LinkedIn, GitHub, and a downloadable CV, or validate a message draft before reaching out."
 	path="/contact"
 />
 
-<section class="py-12 sm:py-16">
+<section class="py-section-compact sm:py-section-regular">
 	<div class="editorial-container">
 		<div class="grid gap-10 lg:grid-cols-12">
 			<!-- Left Column: Direct Channels & CV Access -->
@@ -57,12 +57,12 @@
 			<!-- Right Column: Accessible Contact Message Form -->
 			<div class="lg:col-span-7">
 				<div class="editorial-card p-6 sm:p-8">
-					<p class="section-kicker">Direct Inquiry</p>
+					<p class="section-kicker">Message Draft</p>
 					<h2 class="mt-1 text-xl font-bold" style="color: var(--text-primary);">
-						Send a Message
+						Validate a Message Draft
 					</h2>
 					<p class="mt-1 text-xs" style="color: var(--text-muted);">
-						All inputs are validated and sanitized server-side.
+						This form validates and sanitizes a draft but does not send or store it. Use LinkedIn or GitHub to get in touch.
 					</p>
 
 					{#if form?.success}
@@ -72,10 +72,10 @@
 							style="border-color: var(--status-pro-border); background-color: var(--status-pro-bg); color: var(--status-pro-text);"
 						>
 							<p class="text-sm font-bold">
-								Thank you, {form.recipientName}. Your message has been recorded.
+								Your draft passed server-side validation, {form.recipientName}.
 							</p>
 							<p class="mt-1 text-xs">
-								You can also connect directly on LinkedIn or GitHub for an immediate response.
+								Nothing was sent or stored. Your sanitized draft remains in the form; use LinkedIn or GitHub to contact me.
 							</p>
 						</div>
 					{/if}
@@ -173,9 +173,9 @@
 						<button
 							type="submit"
 							class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold"
-							style="background-color: var(--accent-primary); color: #ffffff;"
+							style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 						>
-							<span>Send Inquiry</span>
+							<span>Validate Draft</span>
 							<Icon name="arrow-right" size={16} />
 						</button>
 					</form>

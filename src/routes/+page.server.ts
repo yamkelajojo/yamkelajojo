@@ -3,16 +3,15 @@ import { getProfile } from '$lib/data/profile';
 import { getAllExperiences } from '$lib/data/experience';
 import { enrichProjectsWithGitHub, getFeaturedProjects } from '$lib/data/projects';
 import { SKILL_CATEGORIES, getSkillsByCategory } from '$lib/data/skills';
-import { fetchUserRepositories } from '$lib/github/service';
-import { env } from '$env/dynamic/private';
+import { loadGitHubRepositories } from '$lib/github/server';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, locals, setHeaders }) => {
 	const profile = getProfile();
 	const experiences = getAllExperiences();
-	const githubResult = await fetchUserRepositories({
-		username: env.GITHUB_USERNAME || profile.githubUsername,
-		token: env.GITHUB_TOKEN,
-		fetchImpl: fetch
+	const githubResult = await loadGitHubRepositories(fetch, {
+		username: profile.githubUsername,
+		locals,
+		setHeaders
 	});
 
 	const featuredProjects = enrichProjectsWithGitHub(
@@ -33,7 +32,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		githubMeta: {
 			source: githubResult.source,
 			fetchedAt: githubResult.fetchedAt,
-			isStale: githubResult.isStale,
+			failureCode: githubResult.failureCode,
+			errorMessage: githubResult.errorMessage,
 			totalRepos: githubResult.repositories.length
 		},
 		technicalAreas

@@ -10,7 +10,7 @@
 	path={page.url.pathname}
 />
 
-<section class="editorial-container py-20">
+<section class="editorial-container py-section-generous">
 	<div class="editorial-card mx-auto max-w-2xl p-8">
 		<p class="section-kicker">HTTP {page.status}</p>
 		<h1 class="mt-2 text-3xl font-bold tracking-tight" style="color: var(--text-primary);">
@@ -25,7 +25,7 @@
 			<a
 				href="/"
 				class="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold"
-				style="background-color: var(--accent-primary); color: #ffffff;"
+				style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 			>
 				<span>Return Home</span>
 				<Icon name="arrow-right" size={15} />

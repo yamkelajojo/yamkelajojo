@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
+		"preview": "wrangler dev --local",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"lint": "eslint .",
@@ -15,8 +15,8 @@
 		"test:integration": "vitest run tests/integration",
 		"test:coverage": "vitest run --coverage",
 		"test:e2e": "playwright test",
-		"verify": "npm run check && npm run test:coverage && npm run build && npm run test:e2e",
-		"cf:dev": "wrangler dev .svelte-kit/cloudflare/_worker.js",
+		"verify": "npm run check && npm run lint && npm run test:coverage && npm run build && npm run test:e2e",
+		"cf:dev": "wrangler dev --local",
 		"cf:deploy": "npm run build && wrangler deploy"
 	},
 	"dependencies": {
@@ -48,5 +48,10 @@
 		"vite": "^7.3.1",
 		"vitest": "^4.1.11",
 		"wrangler": "^4.147.0"
+	},
+	"overrides": {
+		"@sveltejs/kit": {
+			"cookie": "^0.7.2"
+		}
 	}
 }

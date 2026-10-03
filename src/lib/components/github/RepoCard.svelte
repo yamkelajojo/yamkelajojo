@@ -23,26 +23,33 @@
 						{repo.name}
 					</a>
 				</h3>
-				<p class="text-xs" style="font-family: var(--font-mono); color: var(--text-muted);">
+				<p class="metadata-text">
 					{repo.fullName}
 				</p>
 			</div>
 
-			{#if repo.isFork}
-				<span
-					class="shrink-0 rounded border px-2 py-0.5 text-[11px]"
-					style="font-family: var(--font-mono); border-color: var(--border-subtle); color: var(--text-muted);"
-				>
-					Fork / Sprint Template
-				</span>
-			{:else}
-				<span
-					class="shrink-0 rounded px-2 py-0.5 text-[11px] badge-handson"
-					style="font-family: var(--font-mono);"
-				>
-					Source Repo
-				</span>
-			{/if}
+			<div class="flex shrink-0 flex-wrap justify-end gap-1.5">
+				{#if repo.isFork}
+					<span
+						class="rounded border px-2 py-0.5 text-[11px]"
+						style="font-family: var(--font-mono); border-color: var(--border-subtle); color: var(--text-muted);"
+					>
+						Fork / Sprint Template
+					</span>
+				{:else}
+					<span
+						class="rounded px-2 py-0.5 text-[11px] badge-handson"
+						style="font-family: var(--font-mono);"
+					>
+						Source Repo
+					</span>
+				{/if}
+				{#if repo.isArchived}
+					<span class="badge-archived rounded px-2 py-0.5 text-[11px]" style="font-family: var(--font-mono);">
+						Archived
+					</span>
+				{/if}
+			</div>
 		</div>
 
 		<p class="mt-3 text-sm leading-relaxed" style="color: var(--text-secondary);">

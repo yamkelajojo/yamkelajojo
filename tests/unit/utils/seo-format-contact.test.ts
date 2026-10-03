@@ -3,7 +3,9 @@ import {
 	buildCanonicalUrl,
 	buildPageSeo,
 	buildPersonJsonLd,
-	buildSitemapXml
+	buildSitemapXml,
+	DEFAULT_SITE_ORIGIN,
+	getSiteOrigin
 } from '$lib/utils/seo';
 import { formatIsoDate, getLanguageColor } from '$lib/utils/format';
 import { sanitizeText, validateContactSubmission } from '$lib/utils/contact';
@@ -26,8 +28,8 @@ describe('SEO-001, SEC-001 & Formatting utilities', () => {
 			path: '/work'
 		});
 		expect(seo.fullTitle).toBe('Selected Work — Yamkela Jojo | Full-Stack & Software Developer');
-		expect(seo.canonicalUrl).toBe('https://yamkelajojo.workers.dev/work');
-		expect(seo.imageUrl).toBe('https://yamkelajojo.workers.dev/images/og-cover.svg');
+		expect(seo.canonicalUrl).toBe(`${DEFAULT_SITE_ORIGIN}/work`);
+		expect(seo.imageUrl).toBe(`${DEFAULT_SITE_ORIGIN}/images/og-cover.svg`);
 		expect(seo.ogType).toBe('website');
 
 		const customImageSeo = buildPageSeo({
@@ -37,7 +39,19 @@ describe('SEO-001, SEC-001 & Formatting utilities', () => {
 		});
 		expect(customImageSeo.fullTitle).toBe('Yamkela Jojo | Full-Stack & Software Developer');
 		expect(customImageSeo.imageUrl).toBe(
-			'https://yamkelajojo.workers.dev/images/projects/portfolio-architecture.svg'
+			`${DEFAULT_SITE_ORIGIN}/images/projects/portfolio-architecture.svg`
+		);
+	});
+
+	it('rejects path-bearing or non-HTTPS canonical origins and prevents protocol-relative path escapes', () => {
+		expect(getSiteOrigin('http://insecure.example')).toBe(DEFAULT_SITE_ORIGIN);
+		expect(getSiteOrigin('https://portfolio.example/path')).toBe(DEFAULT_SITE_ORIGIN);
+		expect(getSiteOrigin('https://user:password@portfolio.example')).toBe(DEFAULT_SITE_ORIGIN);
+		expect(buildCanonicalUrl('//attacker.example/path', 'https://portfolio.example')).toBe(
+			'https://portfolio.example/attacker.example/path'
+		);
+		expect(buildCanonicalUrl('/github?refresh=1', 'https://portfolio.example')).toBe(
+			'https://portfolio.example/github'
 		);
 	});
 
@@ -67,10 +81,10 @@ describe('SEO-001, SEC-001 & Formatting utilities', () => {
 		expect(formatIsoDate(null)).toBe('Unknown');
 		expect(formatIsoDate('invalid-date')).toBe('Unknown');
 
-		expect(getLanguageColor('TypeScript')).toMatch(/^#/);
-		expect(getLanguageColor('PHP')).toMatch(/^#/);
-		expect(getLanguageColor(null)).toBe('#6e6a63');
-		expect(getLanguageColor('UnlistedLang')).toBe('#6e6a63');
+		expect(getLanguageColor('TypeScript')).toBe('var(--language-typescript)');
+		expect(getLanguageColor('PHP')).toBe('var(--language-php)');
+		expect(getLanguageColor(null)).toBe('var(--language-default)');
+		expect(getLanguageColor('UnlistedLang')).toBe('var(--language-default)');
 	});
 
 	it('sanitizes control/HTML characters and validates contact submissions across all boundary conditions', () => {

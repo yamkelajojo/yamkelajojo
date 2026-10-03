@@ -23,7 +23,7 @@
 	path="/experience"
 />
 
-<section class="border-b py-12 sm:py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-compact sm:py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<p class="section-kicker">Chronological Career Record</p>
 		<h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text-primary);">
@@ -71,7 +71,7 @@
 						value="all"
 						class="rounded-md px-3 py-1.5 text-xs font-medium"
 						style={selectedFilter === 'all'
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						All ({experiences.length})
@@ -80,7 +80,7 @@
 						value="professional"
 						class="rounded-md px-3 py-1.5 text-xs font-medium"
 						style={selectedFilter === 'professional'
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						Professional Employment (1)
@@ -89,7 +89,7 @@
 						value="training"
 						class="rounded-md px-3 py-1.5 text-xs font-medium"
 						style={selectedFilter === 'training'
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						Structured Training (2)
@@ -98,7 +98,7 @@
 						value="apprenticeship"
 						class="rounded-md px-3 py-1.5 text-xs font-medium"
 						style={selectedFilter === 'apprenticeship'
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						Apprenticeship (1)

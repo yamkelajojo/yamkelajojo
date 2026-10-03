@@ -3,15 +3,15 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
+		interface Locals {
+			githubDataStatus?: 503;
+		}
+		interface PageData {
+			siteOrigin: string;
+		}
 		// interface PageState {}
 		interface Platform {
 			env?: Record<string, unknown>;
-			caches?: CacheStorage & { default: Cache };
-			ctx?: {
-				waitUntil(promise: Promise<unknown>): void;
-			};
 		}
 	}
 }

@@ -1,156 +1,97 @@
-# Yamkela Jojo — Personal Developer Portfolio
+# Yamkela Jojo — Developer Portfolio
 
-A production-grade, edge-deployed personal engineering portfolio for **Yamkela Jojo** — Full-Stack Developer (`Laravel/PHP`, `Vue/Nuxt`, `SvelteKit/TypeScript`, `React Native/Expo`, `Python`, `SQL`, and cloud/security tooling).
+A SvelteKit portfolio for **Yamkela Jojo**, a Durban-based full-stack and software developer. It presents professional experience, projects, a web CV and downloadable PDF, and public GitHub repository data.
 
-Engineered with **SvelteKit 2 + Svelte 5 + TypeScript + Bits UI + Tailwind CSS 4 + Cloudflare Workers**, targeting **R0/month** operational cost and developed using **Vertical Slice Architecture**, **Test-Driven Development (TDD)**, and **V-Model Requirements Traceability**.
+Built with SvelteKit 2, Svelte 5, TypeScript, Tailwind CSS 4, Bits UI, and `@sveltejs/adapter-cloudflare`. Cloudflare Workers and Static Assets are the deployment target; the app is designed to use Cloudflare's free-plan services without a separate database or paid backend. Free-plan quotas still apply.
 
----
+## Architecture
 
-## Architecture & Engineering Highlights
+- **Cloudflare Worker + Static Assets:** SvelteKit server routes are handled by the generated Worker. Files such as the CV PDF, icons, images, and hashed client assets are served through the configured Static Assets binding (`run_worker_first: false`). This does not make every page static: `/`, `/work`, `/github`, `/api/github`, and other SvelteKit routes can invoke the Worker.
+- **GitHub data:** `/`, `/work`, `/github`, and `/api/github` call the same server-side GitHub client when their Worker handler runs. It requests public repositories, follows up to 20 pages, applies a 4.5-second timeout, validates and normalizes the response, and falls back to a maintained snapshot when GitHub fails. A cold failure returns fallback data with an explicit failure status; it does not pretend the snapshot was freshly fetched.
+- **No application-managed data cache:** the GitHub service does not implement a memory/TTL cache or scheduled synchronization job. The snapshot is a manually maintained fallback. The generated adapter Worker also contains an internal `caches.default` response wrapper around SvelteKit; it runs after Worker invocation, is distinct from Workers Caching, and is not relied on for correctness or for skipping Worker CPU.
+- **SEO origin:** canonical, Open Graph, JSON-LD, sitemap, and robots URLs use the configured server-side `SITE_ORIGIN`, never an untrusted request `Host` header.
 
-- **Edge-First Zero-Cost Architecture (`R0/month`)**: Built with `@sveltejs/adapter-cloudflare` and `wrangler.jsonc` Static Assets (`run_worker_first: false`), serving static pages and CV downloads directly from Cloudflare's edge CDN without invoking Worker CPU quotas.
-- **Resilient 4-Tier GitHub Integration**: `src/lib/github/` normalizes `api.github.com/users/yamkelajojo/repos` through a clean adapter boundary (`Cache [1h TTL] -> Live GitHub REST API -> Stale Cache [24h] -> Verified Static Snapshot`), ensuring `/`, `/work`, and `/github` never break under rate-limiting or network outages.
-- **Strictly Honest Career & Skill Taxonomy**: `src/lib/data/` encodes every CV claim with explicit evidence provenance (`Professional Production`, `Structured Training`, `Academic Foundation`, `Project-Verified`, `Active Exploration`), never inventing metrics or conflating learnerships with commercial employment.
-- **Modern CSS Reset & Editorial Design System**: Incorporates the June 2026 revision of [Josh W. Comeau's Custom CSS Reset](https://www.joshwcomeau.com/css/custom-css-reset/) alongside custom light/dark editorial design tokens, `@media (prefers-reduced-motion: reduce)` safeguards, and `@media print` resume styles.
-- **Accessible Interactive Primitives**: Built with headless WAI-ARIA compliant [Bits UI](https://www.bits-ui.com) Svelte 5 primitives (`Dialog`, `Tabs`, `Accordion`) and verified with automated `axe-core` WCAG 2.1 AA audits across every route.
-- **Lightweight Hardware Footprint**: Configured with `maxWorkers: 2` and zero external runtime services (no Docker, database daemon, or separate backend), keeping memory usage comfortable on an 8 GB RAM Windows 11 development laptop.
+## GitHub response caching: chosen approach and trade-offs
 
----
+This project uses **Cloudflare Workers Caching** (`cache.enabled: true` in `wrangler.jsonc`) and response `Cache-Control` headers. It is distinct from the programmatic Workers Cache API and from Static Assets' own delivery/cache behavior.
 
-## Documentation Index
+| Option | Benefits | Trade-offs |
+| --- | --- | --- |
+| **Workers Caching — selected** | No KV binding, scheduled job, or app-level cache code. Cloudflare checks eligible responses before invoking the Worker. Successful GitHub-backed pages and `/api/github` are fresh for 30 minutes, allow a 30-minute stale-while-revalidate window, and specify stale-if-error for up to 24 hours. Fallback responses have a five-minute freshness window. | A cache hit still counts as a Worker request; it avoids Worker execution/CPU, not the request itself. It does not guarantee low request use: misses, expiry, revalidation, query variants, bypasses, and cold caches after a new version deploy can invoke the Worker and GitHub. By default, each Worker version has its own cache, so every deployment starts cold; enabling cross-version reuse trades that warm-up for potentially serving an older version's response until expiry or purge. A cold miss has no prior success to serve stale. Check `Cf-Cache-Status` on the deployed response to observe actual behavior. |
+| **Workers Cache API (`caches.default`)** | Programmatic control over cache keys, reads, writes, and invalidation. | Separate from Workers Caching and requires application-level cache logic. Cloudflare's Cache API documentation describes functional operations for Workers on custom domains; this project must not assume equivalent behavior for its `workers.dev` URL. Not selected. |
+| **GitHub Actions snapshot** | Can refresh a committed JSON snapshot without a runtime GitHub subrequest. | Adds workflow and repository-write/update concerns. Scheduled workflows may be delayed or dropped, run from the default branch, and may be disabled for inactive public repositories. Not selected as a freshness guarantee. |
+| **Cron Trigger + KV** | A scheduled Worker can refresh a snapshot; request handlers can read KV instead of calling GitHub on every cold cache miss. KV has a free allowance, including 100,000 reads/day and 1,000 writes/day. | Adds a `scheduled()` handler, KV binding, persistence/versioning rules, and integration with the existing SvelteKit Worker. More moving parts than route-response caching. Not selected. |
 
-| Document | Purpose |
-| :--- | :--- |
-| [`SPECS_PRD.md`](./SPECS_PRD.md) | Complete Software Requirements Specification, Product Requirements & Test-Driven Development Plan (Sections 1–66) |
-| [`GLOSSARY.md`](./GLOSSARY.md) | Ubiquitous domain language and architectural seam definitions |
-| [`docs/requirements/vertical-slices.md`](./docs/requirements/vertical-slices.md) | Tracer-bullet vertical slice decomposition (`SLICE-01` through `SLICE-06`) with blocking dependencies |
-| [`docs/requirements/traceability-matrix.md`](./docs/requirements/traceability-matrix.md) | V-Model Requirements-to-Verification Traceability Matrix (`AT-001` through `AT-010`) |
-| [`docs/architecture/system-architecture.md`](./docs/architecture/system-architecture.md) | System architecture diagram and Architectural Decision Records (`ADR-001` through `ADR-004`) |
-| [`docs/testing/testing-strategy.md`](./docs/testing/testing-strategy.md) | TDD workflow (`RED -> GREEN -> REFACTOR`), white-box/black-box test design, and `axe-core` accessibility verification |
+The generated SvelteKit adapter Worker also contains a `caches.default` lookup/write wrapper around the SvelteKit handler. This adapter-internal Cache API layer runs only after the Worker has been invoked; it is distinct from the selected Workers Caching layer and is not counted on to skip Worker CPU or to make `workers.dev` behavior reliable. The [Cache API documentation](https://developers.cloudflare.com/workers/runtime-apis/cache/) describes functional operations for Workers on custom domains, so validate any reliance on the adapter wrapper for the actual hostname.
 
----
+Cloudflare's Workers Free plan currently includes 100,000 Worker requests/day. Workers Caching hits count toward that request allowance, though the Worker code does not run on a hit. Do not interpret caching as a way to eliminate request charges or as a guarantee that the portfolio will stay below quota under arbitrary traffic.
 
-## Repository Structure
+The public `?refresh=1` bypass is intentionally unavailable. Public query strings are canonicalized with a no-store redirect. For SvelteKit data requests, only the current route tree's well-formed two-bit invalidation mask and a single recognized trailing-slash marker are retained; malformed masks and other query parameters are removed. This keeps the framework's data protocol working while bounding cache variants, rather than giving visitors an unrestricted GitHub synchronization bypass. If nested layouts are added, update the accepted mask shape and its Worker regression tests.
+
+## Repository structure
 
 ```text
-├── docs/
-│   ├── architecture/system-architecture.md
-│   ├── requirements/traceability-matrix.md
-│   ├── requirements/vertical-slices.md
-│   └── testing/testing-strategy.md
-├── src/
-│   ├── app.css                         # Tailwind v4 + Josh W. Comeau 2026 Custom CSS Reset + tokens
-│   ├── app.d.ts                        # SvelteKit platform & Cloudflare Worker types
-│   ├── app.html                        # HTML shell + zero-flash theme initialization
-│   ├── hooks.server.ts                 # Security headers (nosniff, SAMEORIGIN, COOP, Referrer-Policy)
-│   ├── lib/
-│   │   ├── components/
-│   │   │   ├── experience/             # ExperienceCard
-│   │   │   ├── github/                 # RepoCard
-│   │   │   ├── navigation/             # Header (Bits UI Dialog mobile drawer), Footer
-│   │   │   ├── projects/               # ProjectCard
-│   │   │   ├── shared/                 # SeoHead (Canonical, OpenGraph, JSON-LD)
-│   │   │   └── ui/                     # Icon, ContextBadge
-│   │   ├── data/
-│   │   │   ├── certifications.ts       # Structured certification status (AWS Cloud Practitioner — In Progress)
-│   │   │   ├── education.ts            # WSU National Diploma, WeThinkCode_ NQF 5, ExploreAI NQF 5 & Kokstad NSC
-│   │   │   ├── experience.ts           # CustomConnect (Junior Web Developer), ExploreAI, WeThinkCode_ & Nova Smart
-│   │   │   ├── profile.ts              # Identity, positioning, narrative & contact links
-│   │   │   ├── projects.ts             # 6 deep engineering case studies & 4 lab experiments
-│   │   │   └── skills.ts               # Categorized skills with honest context levels
-│   │   ├── github/
-│   │   │   ├── cache.ts                # TTL + stale-while-revalidate memory cache
-│   │   │   ├── fallback.ts             # Verified 10-repository snapshot for yamkelajojo
-│   │   │   ├── normalizer.ts           # GitHub REST API payload normalizer, filter & sorter
-│   │   │   └── service.ts              # Resilient 4-tier fetchUserRepositories service
-│   │   ├── types/                      # Domain & GitHub TypeScript interfaces
-│   │   └── utils/                      # SEO/JSON-LD, date/language formatters, contact validation
-│   └── routes/
-│       ├── +layout.svelte              # Global Skip-to-Content, Header, main landmark, Footer
-│       ├── +error.svelte               # Accessible error boundary
-│       ├── +page.{server.ts,svelte}    # Home (Hero, Credibility Strip, Featured Work, GitHub, CTA)
-│       ├── work/                       # Work index (Bits UI Tabs category filter) & [slug] case studies
-│       ├── about/+page.svelte          # Narrative, Bits UI Tabs skill matrix, Education, Certifications
-│       ├── experience/+page.svelte     # Professional Experience vs. Structured Training + Tabs
-│       ├── github/+page.{server.ts,svelte} # Live GitHub Explorer (search, language, sort, fallback banner)
-│       ├── cv/+page.svelte             # Interactive web CV + PDF download + @media print layout
-│       ├── contact/+page.{server.ts,svelte} # Direct channels + server-validated message composer
-│       ├── labs/+page.svelte           # Interactive GitHub normalizer sandbox & domain exploration notes
-│       ├── api/github/+server.ts       # JSON endpoint with edge Cache-Control headers
-│       ├── sitemap.xml/+server.ts      # Dynamic XML sitemap across all canonical routes & slugs
-│       └── robots.txt/+server.ts       # Robots directives & sitemap declaration
-├── static/
-│   ├── icons/favicon.svg
-│   ├── images/                         # Open Graph cover & project architectural blueprint SVGs
-│   └── resume/yamkela-jojo-cv.pdf      # Downloadable CV PDF
-└── tests/
-    ├── unit/                           # 10 unit & white-box test suites (data, github, utils)
-    ├── integration/                    # 4 integration, server-load, artifact & axe-core accessibility suites
-    └── e2e/                            # Playwright end-to-end & accessibility specification
+src/
+├── lib/
+│   ├── components/       # Navigation, GitHub status/cards, project cards, shared UI
+│   ├── data/              # Typed profile, experience, skills, projects, education
+│   ├── github/            # API client, normalization, response policy, fallback snapshot
+│   ├── types/             # Portfolio and GitHub domain types
+│   └── utils/             # SEO, formatting, and contact-draft validation
+├── routes/                # SSR pages, GitHub JSON endpoint, sitemap and robots
+├── hooks.server.ts        # Query canonicalization, response and security headers
+└── app.css                # Reset, responsive styles, and light/dark design tokens
+static/                    # CV PDF, icons, Open Graph cover, project diagrams
+scripts/                   # Built Worker integration/E2E harness
+tests/
+├── unit/                  # Domain, normalization, cache-policy, and utility tests
+├── integration/           # Server routes, response policy, rendered pages, accessibility
+└── e2e/                   # Playwright tests against the built Cloudflare Worker
 ```
 
----
+## Setup and quality checks
 
-## Local Development & Verification
-
-### Prerequisites
-
-- **Node.js** `>= 20.x` (verified on `v22.22.3`)
-- **npm** `>= 10.x`
-
-### Setup
+Requirements: Node.js 22 and npm. Install dependencies with:
 
 ```bash
-npm install
+npm ci --legacy-peer-deps
 ```
 
-### Start Development Server
+Run checks in this order:
 
 ```bash
-npm run dev
-```
-
-### Quality Gates (Typecheck, Lint, Test Coverage, Build)
-
-```bash
-# 1. SvelteKit type sync + svelte-check
 npm run check
-
-# 2. ESLint static analysis
 npm run lint
-
-# 3. Unit, white-box, integration & axe-core accessibility tests with V8 coverage
 npm run test:coverage
-
-# 4. Production Cloudflare Worker build
 npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
 
----
+`test:coverage` runs the unit and integration suites. `test:e2e` requires a prior Worker build and launches the generated adapter output with Wrangler plus a local, controlled GitHub API stub; it does not call GitHub's live API. Desktop and mobile projects exercise browser journeys, and a separate failure-mode Worker verifies the fallback UI. The CI workflow runs the same gates and installs Chromium before E2E.
 
-## Content Maintenance Guide
+`npm run verify` runs the checks, build, and E2E suite (Playwright's browser must already be installed).
 
-All portfolio content is strongly typed in `src/lib/data/` and guarded by unit tests in `tests/unit/data/`:
-
-1. **Update Profile / Bio / Links**: Edit `src/lib/data/profile.ts`.
-2. **Add or Update Work Experience**: Edit `src/lib/data/experience.ts`. Ensure `category` is set accurately (`'professional'` vs `'training'` vs `'apprenticeship'`).
-3. **Add a Featured Case Study**: Add a `FeaturedProject` entry in `src/lib/data/projects.ts` with `slug`, `summary`, `problem`, `approach`, `architectureOverview`, `engineeringDecisions`, `stack`, and optional `githubRepoName` (which automatically links live GitHub telemetry to `/work/[slug]`).
-4. **Update Skills or Certifications**: Edit `src/lib/data/skills.ts` or `src/lib/data/certifications.ts`.
-5. **Replace Downloadable CV PDF**: Replace `static/resume/yamkela-jojo-cv.pdf` and keep `profile.resumePath` in `src/lib/data/profile.ts` aligned.
-
----
-
-## Deployment to Cloudflare Workers (`R0/month`)
-
-This repository is pre-configured with `@sveltejs/adapter-cloudflare` (`svelte.config.js`) and `wrangler.jsonc`:
+## Local development and Worker preview
 
 ```bash
-# Build and preview locally on the Cloudflare Workers runtime
-npm run preview
-
-# Deploy to Cloudflare Workers
-npm run deploy
+npm run dev       # Vite/SvelteKit development server
+npm run build     # adapter-cloudflare production output
+npm run preview   # Wrangler local Worker runtime + Static Assets; requires build
 ```
 
-Optional environment variable on Cloudflare Workers:
-- `GITHUB_TOKEN`: Optional read-only GitHub personal access token (`wrangler secret put GITHUB_TOKEN`) to raise the server-side GitHub REST API rate limit from 60 requests/hour to 5,000 requests/hour. The application remains 100% functional without a token.
+`npm run preview` uses the same Wrangler configuration and generated Worker that deployment uses. Configure `SITE_ORIGIN` in the local environment or `wrangler.jsonc` for the origin you intend to test. `SITE_ORIGIN` must be an HTTPS origin without a path, query, or fragment. The checked-in Wrangler value targets the project's `workers.dev` URL; change it to the custom production domain if one is configured.
+
+## Deploy to Cloudflare Workers
+
+After setting the correct `SITE_ORIGIN` and authenticating Wrangler:
+
+```bash
+npm run cf:deploy
+```
+
+This script runs `npm run build` and then `wrangler deploy`. To preview the build locally first, run `npm run preview`. The Cloudflare adapter options in `svelte.config.js` and Static Assets settings in `wrangler.jsonc` are the deployment configuration; avoid substituting a Node/Vite preview when verifying Worker behavior.
+
+The public GitHub API works without a token at its unauthenticated rate limit. An optional server-side `GITHUB_TOKEN` may be configured with `npx wrangler secret put GITHUB_TOKEN`; never expose it through a `PUBLIC_` variable or commit it.
+
+The contact form currently **validates and sanitizes a draft only**. It does not send or store a message; visitors should use the verified LinkedIn or GitHub links on the Contact page to get in touch.

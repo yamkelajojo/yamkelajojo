@@ -4,16 +4,13 @@ import {
 	enrichProjectsWithGitHub,
 	getFeaturedProjects
 } from '$lib/data/projects';
-import { fetchUserRepositories } from '$lib/github/service';
-import { env } from '$env/dynamic/private';
+import { loadGitHubRepositories } from '$lib/github/server';
 
-export const load: PageServerLoad = async ({ fetch }) => {
-	const githubResult = await fetchUserRepositories({
-		username: env.GITHUB_USERNAME || 'yamkelajojo',
-		token: env.GITHUB_TOKEN,
-		fetchImpl: fetch
+export const load: PageServerLoad = async ({ fetch, locals, setHeaders }) => {
+	const githubResult = await loadGitHubRepositories(fetch, {
+		locals,
+		setHeaders
 	});
-
 	const featuredProjects = enrichProjectsWithGitHub(
 		getFeaturedProjects(),
 		githubResult.repositories
@@ -25,8 +22,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		repositories: githubResult.repositories,
 		githubMeta: {
 			source: githubResult.source,
-			isStale: githubResult.isStale,
-			fetchedAt: githubResult.fetchedAt
+			fetchedAt: githubResult.fetchedAt,
+			failureCode: githubResult.failureCode,
+			errorMessage: githubResult.errorMessage,
+			totalRepos: githubResult.repositories.length
 		}
 	};
 };

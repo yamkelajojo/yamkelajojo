@@ -51,7 +51,7 @@
 	path="/labs"
 />
 
-<section class="border-b py-12 sm:py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-compact sm:py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<p class="section-kicker">/Labs — Technical Explorations</p>
 		<h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text-primary);">

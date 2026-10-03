@@ -970,45 +970,43 @@ The application does not require a Python backend.
 
 ---
 
-# 32. GitHub Data Flow
+# 32. GitHub Data Flow (Implemented Architecture)
 
-```text id="tpufjd"
-Visitor
+Cloudflare Workers Caching is configured before Worker invocation. It is separate from the GitHub service and from the Workers Cache API:
+
+```text
+GET /, /work, /github, or /api/github
    ↓
-SvelteKit / Worker
-   ↓
-cache lookup
-   │
-   ├── valid → return cached metadata
-   │
-   └── stale/missing
-            ↓
-        GitHub API
-            ↓
-      validate response
-            ↓
-        normalize
-            ↓
-          cache
-            ↓
-         return
+Cloudflare Workers Caching
+   ├── eligible hit → return stored response before Worker code
+   │                  (still counts as a Worker request; Worker CPU is skipped)
+   └── cold miss / expiry / revalidation → SvelteKit Worker
+                                        ↓
+                                  GitHub REST API
+                                        ↓
+                                validate + normalize
+                                        ↓
+                         HTML/JSON response + Cache-Control
 ```
 
-This prevents unnecessary API calls and makes the portfolio resilient.
+The service has no process-local or KV cache. When its Worker handler runs it makes a bounded GitHub request (4.5-second timeout, up to 20 pages of 100 repositories); response headers provide cache policy for Cloudflare Workers Caching. A cached HIT can reduce Worker execution and GitHub subrequests, but still counts as a Worker request. Misses and revalidations can invoke GitHub, so caching alone does not guarantee low request use. Observe deployed `Cf-Cache-Status` values to confirm real cache behavior.
+
+Successful GitHub-backed responses use `public, max-age=1800, stale-while-revalidate=1800, stale-if-error=86400`. Fallback responses use a five-minute freshness window. A public `?refresh=1` bypass is not available; public query strings redirect to their canonical path with `Cache-Control: private, no-store`. SvelteKit data requests retain only a well-formed two-bit invalidation mask for the current single-layout route tree and one recognized trailing-slash marker; malformed or duplicate internal parameters and other query values are canonicalized away. This bounds cache variants without breaking the data protocol. Revisit the accepted mask shape if nested layouts are added.
 
 ---
 
-# 33. GitHub Failure Behaviour
+# 33. GitHub Failure Behaviour (Implemented Architecture)
 
-If GitHub fails:
+If a Worker invocation cannot safely use GitHub data:
 
 ```text
-1. Use cached data
-2. Use local featured-project data
-3. Display graceful unavailable state
-4. Do not crash the page
-5. Do not expose raw API errors
+1. Return the maintained, manually curated public repository snapshot.
+2. Mark the payload `source: "fallback-snapshot"`, omit a live `fetchedAt`, and expose a safe failure code/message.
+3. Return a 503 status for the GitHub-backed page or JSON endpoint while rendering usable fallback UI.
+4. Never expose raw GitHub response bodies or stack traces.
 ```
+
+A cold Worker-cache miss cannot serve a previous live response because no cached response exists. The maintained snapshot is not an in-process stale cache. If a prior successful response is served stale by Workers Caching under the configured directives, that is Cloudflare cache behavior and is observed separately through `Cf-Cache-Status`.
 
 ---
 

@@ -49,7 +49,7 @@
 />
 
 <!-- 1. Narrative Section -->
-<section class="border-b py-12 sm:py-16" style="border-color: var(--border-subtle);">
+<section class="border-b py-section-compact sm:py-section-regular" style="border-color: var(--border-subtle);">
 	<div class="editorial-container">
 		<div class="grid gap-10 lg:grid-cols-12">
 			<div class="lg:col-span-7">
@@ -86,7 +86,7 @@
 						href={profile.resumeUrl}
 						download="Yamkela-Jojo-CV.pdf"
 						class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold"
-						style="background-color: var(--accent-primary); color: #ffffff;"
+						style="background-color: var(--accent-primary); color: var(--text-on-accent);"
 					>
 						<Icon name="download" size={16} />
 						<span>Download CV (PDF)</span>
@@ -116,7 +116,7 @@
 									{stage.step}. {stage.title}
 								</span>
 							</div>
-							<p class="text-[11px]" style="font-family: var(--font-mono); color: var(--text-muted);">
+							<p class="metadata-text">
 								{stage.context}
 							</p>
 							<p class="mt-1 text-xs leading-relaxed" style="color: var(--text-secondary);">
@@ -166,7 +166,7 @@
 						value={tab.value}
 						class="rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
 						style={selectedContext === tab.value
-							? 'background-color: var(--accent-primary); color: #ffffff; font-family: var(--font-mono);'
+							? 'background-color: var(--accent-primary); color: var(--text-on-accent); font-family: var(--font-mono);'
 							: 'color: var(--text-secondary); font-family: var(--font-mono);'}
 					>
 						{tab.label}

@@ -1,13 +1,13 @@
-const LANGUAGE_COLORS: Record<string, string> = {
-	TypeScript: '#2b6cb0',
-	JavaScript: '#b7791f',
-	PHP: '#5a509b',
-	Blade: '#c2542d',
-	Vue: '#1f6f54',
-	Python: '#2c5282',
-	'Jupyter Notebook': '#b84a27',
-	Java: '#9c4221',
-	Dart: '#0987a0'
+const LANGUAGE_COLOR_TOKENS: Record<string, string> = {
+	TypeScript: '--language-typescript',
+	JavaScript: '--language-javascript',
+	PHP: '--language-php',
+	Blade: '--language-blade',
+	Vue: '--language-vue',
+	Python: '--language-python',
+	'Jupyter Notebook': '--language-jupyter',
+	Java: '--language-java',
+	Dart: '--language-dart'
 };
 
 export function formatIsoDate(isoDate: string | null | undefined): string {
@@ -23,6 +23,6 @@ export function formatIsoDate(isoDate: string | null | undefined): string {
 }
 
 export function getLanguageColor(language: string | null | undefined): string {
-	if (!language) return '#6e6a63';
-	return LANGUAGE_COLORS[language] ?? '#6e6a63';
+	const token = language ? LANGUAGE_COLOR_TOKENS[language] : undefined;
+	return `var(${token ?? '--language-default'})`;
 }

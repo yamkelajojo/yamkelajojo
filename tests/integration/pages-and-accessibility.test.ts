@@ -27,7 +27,7 @@ import { extractAvailableLanguages } from '$lib/github/normalizer';
 async function expectNoAxeViolations(container: HTMLElement) {
 	const results = await axe.run(container, {
 		rules: {
-			// jsdom does not compute canvas pixel contrast; color tokens are verified separately
+			// jsdom cannot calculate actual rendered colors; browser E2E runs the full axe checks.
 			'color-contrast': { enabled: false },
 			region: { enabled: false }
 		}
@@ -35,13 +35,20 @@ async function expectNoAxeViolations(container: HTMLElement) {
 	expect(results.violations).toEqual([]);
 }
 
-describe('Integration & Accessibility — Rendered Pages, Bits UI Interactions & Acceptance Criteria (AT-001..AT-010)', () => {
-	const profile = getProfile();
-	const experiences = getAllExperiences();
-	const repos = getFallbackRepositories();
-	const enrichedProjects = enrichProjectsWithGitHub(getFeaturedProjects(), repos);
+const siteOrigin = 'https://portfolio.example';
+const profile = getProfile();
+const experiences = getAllExperiences();
+const repositories = getFallbackRepositories();
+const enrichedProjects = enrichProjectsWithGitHub(getFeaturedProjects(), repositories);
+const githubStatus = {
+	source: 'github-api' as const,
+	fetchedAt: '2026-10-03T07:13:14Z',
+	failureCode: null,
+	errorMessage: null
+};
 
-	it('AT-001 — Renders Header, Footer, and Homepage with immediate identity, positioning, work, and zero axe violations', async () => {
+describe('Integration — rendered portfolio flows and semantic accessibility', () => {
+	it('renders keyboard navigation, homepage identity, GitHub source status and footer', async () => {
 		const { container: headerContainer, getByLabelText } = render(Header, {
 			props: { currentPath: '/' }
 		});
@@ -50,17 +57,13 @@ describe('Integration & Accessibility — Rendered Pages, Bits UI Interactions &
 
 		const { container: homeContainer, getByRole, getAllByText } = render(HomePage, {
 			props: {
-				data: {
-					profile,
-					experiences,
+					data: {
+						siteOrigin,
+						profile,
+						experiences,
 					featuredProjects: enrichedProjects.slice(0, 4),
-					recentRepos: repos.slice(0, 4),
-					githubMeta: {
-						source: 'live',
-						fetchedAt: '2026-10-03T07:13:14Z',
-						isStale: false,
-						totalRepos: repos.length
-					},
+					recentRepos: repositories.slice(0, 4),
+					githubMeta: { ...githubStatus, totalRepos: repositories.length },
 					technicalAreas: SKILL_CATEGORIES.map((category) => ({
 						category,
 						skills: getSkillsByCategory(category).slice(0, 5)
@@ -68,116 +71,125 @@ describe('Integration & Accessibility — Rendered Pages, Bits UI Interactions &
 				}
 			}
 		});
-
 		expect(getByRole('heading', { level: 1 })).toHaveTextContent(/Yamkela Jojo/i);
 		expect(getAllByText(/CustomConnect/i).length).toBeGreaterThan(0);
+		expect(getByRole('group', { name: /GitHub repository data status/i })).toBeInTheDocument();
 		await expectNoAxeViolations(homeContainer);
 
 		const { container: footerContainer } = render(Footer);
 		await expectNoAxeViolations(footerContainer);
+		cleanup();
 	});
 
-	it('AT-002 — Renders About page with narrative, honest skill contexts, tertiary education weighting, and certification status', async () => {
-		const { container, getByRole, getAllByText } = render(AboutPage);
-
+	it('renders About and Experience with real portfolio distinctions and accessible headings', async () => {
+		const { container: aboutContainer, getByRole, getAllByText } = render(AboutPage);
 		expect(getByRole('heading', { level: 1 })).toHaveTextContent(/Software Development at the Core/i);
 		expect(getAllByText(/Walter Sisulu University/i).length).toBeGreaterThan(0);
 		expect(getAllByText(/AWS Cloud Practitioner/i).length).toBeGreaterThan(0);
 		expect(getAllByText(/In Progress/i).length).toBeGreaterThan(0);
-		await expectNoAxeViolations(container);
-	});
+		await expectNoAxeViolations(aboutContainer);
+		cleanup();
 
-	it('AT-003 — Renders Experience page and distinguishes Professional Employment from Structured Training', async () => {
-		const { container, getByRole, getAllByText } = render(ExperiencePage);
-
-		expect(getByRole('heading', { level: 1 })).toHaveTextContent(
+		const { container: experienceContainer, getByRole: getExperienceRole, getAllByText: getExperienceText } =
+			render(ExperiencePage);
+		expect(getExperienceRole('heading', { level: 1 })).toHaveTextContent(
 			/Professional Experience & Engineering Training/i
 		);
-		expect(getAllByText('Professional Employment').length).toBeGreaterThan(0);
-		expect(getAllByText('Structured Training / Learnership').length).toBeGreaterThan(0);
-		await expectNoAxeViolations(container);
+		expect(getExperienceText('Professional Employment').length).toBeGreaterThan(0);
+		expect(getExperienceText('Structured Training / Learnership').length).toBeGreaterThan(0);
+		await expectNoAxeViolations(experienceContainer);
 	});
 
-	it('AT-004 — Renders Work page and Case Study detail page with architecture, decisions, and GitHub telemetry', async () => {
-		const { container: workContainer, getByRole: getWorkRole } = render(WorkPage, {
+	it('renders curated projects, GitHub-backed repo cards and case-study related links', async () => {
+		const { container: workContainer, getByRole: getWorkRole, getAllByText } = render(WorkPage, {
 			props: {
-				data: {
-					categories: ['All', ...PROJECT_CATEGORIES],
+					data: {
+						siteOrigin,
+						categories: ['All', ...PROJECT_CATEGORIES],
 					featuredProjects: enrichedProjects,
-					repositories: repos,
-					githubMeta: {
-						source: 'live',
-						isStale: false,
-						fetchedAt: '2026-10-03T07:13:14Z'
-					}
+					repositories,
+					githubMeta: { ...githubStatus, totalRepos: repositories.length }
 				}
 			}
 		});
 		expect(getWorkRole('heading', { level: 1 })).toHaveTextContent(
 			/Engineering Case Studies & Repository Index/i
 		);
+		expect(getAllByText('greenbidder').length).toBeGreaterThan(0);
 		await expectNoAxeViolations(workContainer);
 		cleanup();
 
 		const project = getFeaturedProjectBySlug('engineering-portfolio')!;
-		const { container: caseContainer, getByRole: getCaseRole, getByText } = render(
+		const { container: caseContainer, getByRole: getCaseRole, getByText: getCaseText } = render(
 			CaseStudyPage,
 			{
 				props: {
-					data: {
-						project,
-						githubRepo: repos[0] ?? null,
-						relatedProjects: getFeaturedProjects().slice(1, 3)
-					}
+						data: { siteOrigin, project, relatedProjects: getFeaturedProjects().slice(1, 3) }
 				}
 			}
 		);
 		expect(getCaseRole('heading', { level: 1 })).toHaveTextContent(project.title);
-		expect(getByText(/Decouple UI from raw GitHub API schema/i)).toBeInTheDocument();
+		expect(getCaseText(/Decouple UI from raw GitHub API schema/i)).toBeInTheDocument();
+		expect(getCaseRole('link', { name: /Open GitHub Repository/i })).toHaveAttribute(
+			'href',
+			project.links.github
+		);
+		expect(getCaseRole('heading', { name: /Other Engineering Case Studies/i })).toBeInTheDocument();
 		await expectNoAxeViolations(caseContainer);
 	});
 
-	it('AT-005 & AT-007 — Renders GitHub explorer, supports filtering, and displays graceful stale/fallback banner without crashing', async () => {
-		const { container, getByLabelText, getByText } = render(GitHubPage, {
+	it('renders a truthful fallback status and filters, sorts, and includes forked repositories', async () => {
+		const fallbackResult = {
+			repositories,
+			source: 'fallback-snapshot' as const,
+			fetchedAt: null,
+			failureCode: 'rate-limited' as const,
+			errorMessage:
+				'GitHub temporarily rate-limited the server. Showing the maintained repository snapshot; the next cache miss or revalidation after its short response-cache window will try GitHub again.'
+		};
+		const { container, getByLabelText, getByRole, getByText, queryByText } = render(GitHubPage, {
 			props: {
-				data: {
-					profile,
-					githubResult: {
-						repositories: repos,
-						source: 'stale-cache',
-						fetchedAt: '2026-10-03T07:13:14Z',
-						isStale: true,
-						errorMessage:
-							'Live GitHub synchronization is temporarily unavailable; displaying cached repository metadata.'
-					},
-					languages: extractAvailableLanguages(repos)
+					data: {
+						siteOrigin,
+						profile,
+						githubResult: fallbackResult,
+					languages: extractAvailableLanguages(repositories)
 				}
 			}
 		});
 
-		expect(getByText(/Stale Cache Fallback/i)).toBeInTheDocument();
-		expect(
-			getByText(/displaying cached repository metadata/i)
-		).toBeInTheDocument();
+		expect(getByText('Maintained fallback snapshot')).toBeInTheDocument();
+		expect(getByText(/GitHub temporarily rate-limited/i)).toBeInTheDocument();
+		expect(getByText(/next cache miss or revalidation/i)).toBeInTheDocument();
+		expect(getByText('greenbidder')).toBeInTheDocument();
 
 		const searchInput = getByLabelText(/Search Repositories/i) as HTMLInputElement;
 		await fireEvent.input(searchInput, { target: { value: 'greenbidder' } });
 		expect(getByText('greenbidder')).toBeInTheDocument();
+		expect(queryByText('Odin-Recipes-2')).not.toBeInTheDocument();
 
+		await fireEvent.input(searchInput, { target: { value: '' } });
+		const forkCheckbox = getByLabelText(/Include Forks/i) as HTMLInputElement;
+		expect(forkCheckbox.checked).toBe(true);
+		await fireEvent.click(forkCheckbox);
+		expect(forkCheckbox.checked).toBe(false);
+		expect(queryByText('classification-predict-streamlit-template')).not.toBeInTheDocument();
+
+		const sortSelect = getByLabelText('Sort By') as HTMLSelectElement;
+		await fireEvent.change(sortSelect, { target: { value: 'name' } });
+		expect(sortSelect.value).toBe('name');
+		expect(getByRole('button', { name: /reset filters/i })).toBeInTheDocument();
 		await expectNoAxeViolations(container);
 	});
 
-	it('AT-008 — Renders CV, Contact, and Labs pages with accessible links and zero axe violations', async () => {
+	it('renders CV, Contact and Labs as real direct-navigation destinations', async () => {
 		const { container: cvContainer, getByRole: getCvRole } = render(CvPage);
 		expect(getCvRole('heading', { level: 1 })).toHaveTextContent(/Curriculum Vitae/i);
 		await expectNoAxeViolations(cvContainer);
 		cleanup();
 
 		const { container: contactContainer, getByRole: getContactRole } = render(ContactPage, {
-			props: {
-				data: { profile },
-				form: null
-			}
+				props: { data: { siteOrigin, profile }, form: null }
 		});
 		expect(getContactRole('heading', { level: 1 })).toHaveTextContent(/Get in Touch/i);
 		await expectNoAxeViolations(contactContainer);
